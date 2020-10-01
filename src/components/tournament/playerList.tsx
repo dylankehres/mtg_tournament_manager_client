@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Table } from "react-bootstrap";
-import { Player } from "../dtos/player";
+import { Player, PlayerIntf } from "../dtos/player";
 
 type PlayerListProps = {
   serverAddress: string;
@@ -29,8 +29,12 @@ class PlayerList extends Component<PlayerListProps, PlayerListState> {
       },
     })
       .then((res) => res.json())
-      .then((playerList: Player[]) => {
-        if (playerList.length > 0) {
+      .then((initPlayerfList: PlayerIntf[]) => {
+        if (initPlayerfList.length > 0) {
+          const playerList: Player[] = [];
+          initPlayerfList.forEach((initPlayer) =>
+            playerList.push(new Player(initPlayer))
+          );
           this.setState({ playerList });
         }
       });
@@ -50,10 +54,10 @@ class PlayerList extends Component<PlayerListProps, PlayerListState> {
             </thead>
             <tbody>
               {this.state.playerList.map((player: Player, index) => (
-                <tr key={player.id}>
+                <tr key={player.getID()}>
                   <td>{index + 1}</td>
-                  <td>{player.name}</td>
-                  <td>{player.deckName}</td>
+                  <td>{player.getName()}</td>
+                  <td>{player.getDeckName()}</td>
                 </tr>
               ))}
             </tbody>

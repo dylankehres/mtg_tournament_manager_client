@@ -12,14 +12,14 @@ type PlayerMatchProps = {
 
 const playerMatch = (props: PlayerMatchProps) => {
   let oppName =
-    props.matchData.getPlayer1().id === props.currPlayer.id
-      ? props.matchData.getPlayer2().name
-      : props.matchData.getPlayer1().name;
+    props.matchData.getPlayer1().getID() === props.currPlayer.getID()
+      ? props.matchData.getPlayer2().getName()
+      : props.matchData.getPlayer1().getName();
 
   return (
     <div className="m-2">
       <h4>{"Opponent: " + oppName}</h4>
-      <h4>{"Table #" + props.matchData.getMatch().tableNum}</h4>
+      <h4>{"Table #" + props.matchData.getMatch().getTableNum()}</h4>
     </div>
   );
 };

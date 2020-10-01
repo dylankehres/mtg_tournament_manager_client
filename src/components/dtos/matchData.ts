@@ -1,11 +1,11 @@
-import { Player } from "./player";
-import { Match } from "./match";
+import { Player, PlayerIntf } from "./player";
+import { Match, MatchIntf } from "./match";
 import { Game, GameIntf } from "./game";
 
 interface MatchDataIntf {
-  player1: Player;
-  player2: Player;
-  match: Match;
+  player1: PlayerIntf;
+  player2: PlayerIntf;
+  match: MatchIntf;
   gameList: GameIntf[];
 }
 
@@ -17,9 +17,9 @@ class MatchData {
 
   constructor(initData?: MatchDataIntf) {
     if (initData) {
-      this.player1 = initData.player1;
-      this.player2 = initData.player2;
-      this.match = initData.match;
+      this.player1 = new Player(initData.player1);
+      this.player2 = new Player(initData.player2);
+      this.match = new Match(initData.match);
       this.gameList = [];
       initData.gameList.forEach((gameData) =>
         this.gameList.push(new Game(gameData))
@@ -75,9 +75,9 @@ class MatchData {
   }
 
   getPlayerByID(id: string): Player {
-    if (this.getPlayer1().id === id) {
+    if (this.getPlayer1().getID() === id) {
       return this.getPlayer1();
-    } else if (this.getPlayer2().id === id) {
+    } else if (this.getPlayer2().getID() === id) {
       return this.getPlayer2();
     }
 
@@ -85,9 +85,9 @@ class MatchData {
   }
 
   getPlayerHasVoted(playerID: string): boolean {
-    if (this.getMatch().player1ID === playerID) {
+    if (this.getMatch().getPlayer1ID() === playerID) {
       return this.getActiveGame().getPlayer1Voted();
-    } else if (this.getMatch().player2ID === playerID) {
+    } else if (this.getMatch().getPlayer2ID() === playerID) {
       return this.getActiveGame().getPlayer2Voted();
     }
 

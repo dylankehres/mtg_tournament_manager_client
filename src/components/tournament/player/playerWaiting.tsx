@@ -3,7 +3,7 @@ import { Button, Form } from "react-bootstrap";
 import Pairings from "../pairings";
 import PlayerList from "../playerList";
 import PlayerMatch from "./playerMatch";
-import { Player } from "../../dtos/player";
+import { Player, PlayerIntf } from "../../dtos/player";
 import { MatchData, MatchDataIntf } from "../../dtos/matchData";
 
 type PlayerWaitingProps = {
@@ -63,13 +63,16 @@ class PlayerWaiting extends Component<PlayerWaitingProps, PlayerWaitingState> {
   }
 
   getPairings() {
-    this.getPlayerData().then((currPlayer: Player) => {
-      if (currPlayer.roomCode === "") {
+    this.getPlayerData().then((initCurrPlayer: PlayerIntf) => {
+      const currPlayer = new Player(initCurrPlayer);
+      if (currPlayer.getRoomCode() === "") {
         alert("Something went wrong. Please try that again.");
       } else {
         this.setState({ currPlayer });
         fetch(
-          `${this.props.serverAddress}/pairings/${this.state.currPlayer.roomCode}`,
+          `${
+            this.props.serverAddress
+          }/pairings/${this.state.currPlayer.getRoomCode()}`,
           {
             method: "GET",
             headers: {
@@ -114,7 +117,9 @@ class PlayerWaiting extends Component<PlayerWaitingProps, PlayerWaitingState> {
 
   readyUp() {
     fetch(
-      `${this.props.serverAddress}/match/ready/${this.state.currPlayer.id}`,
+      `${
+        this.props.serverAddress
+      }/match/ready/${this.state.currPlayer.getID()}`,
       {
         method: "POST",
         headers: {
@@ -152,20 +157,20 @@ class PlayerWaiting extends Component<PlayerWaitingProps, PlayerWaitingState> {
           />
           <Button
             className="btn btn-success m-2"
-            href={`/round/${this.state.currPlayer.id}`}
+            href={`/round/${this.state.currPlayer.getID()}`}
             onClick={() => this.readyUp()}
           >
             Ready
           </Button>
         </React.Fragment>
       );
-    } else if (this.state.currPlayer.roomCode !== "") {
-      console.log("Room code: ", this.state.currPlayer.roomCode);
+    } else if (this.state.currPlayer.getRoomCode() !== "") {
+      console.log("Room code: ", this.state.currPlayer.getRoomCode());
       return (
         <div className="m-2">
           <PlayerList
             serverAddress={this.props.serverAddress}
-            roomCode={this.state.currPlayer.roomCode}
+            roomCode={this.state.currPlayer.getRoomCode()}
           />
           <Form>
             <Button

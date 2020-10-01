@@ -65,9 +65,12 @@ class Round extends Component<RoundProps, RoundState> {
       .then((res) => res.json())
       .then((matchDataInit: MatchDataIntf) => {
         this.setState({ matchData: new MatchData(matchDataInit) });
-        const activeGame = this.state.matchData.getGameByID(currentGameID);
+        this.buildWinnersList();
 
-        if (currentGameID === this.state.matchData.getMatch().activeGameID) {
+        const activeGame = this.state.matchData.getGameByID(currentGameID);
+        if (
+          currentGameID === this.state.matchData.getMatch().getActiveGameID()
+        ) {
           this.setResultStatusMsg();
         } else {
           if (activeGame.getResultStatus() === ResultStatus.ResultsFinal) {
@@ -105,7 +108,7 @@ class Round extends Component<RoundProps, RoundState> {
       });
     } else if (activeGame.getResultStatus() === ResultStatus.ResultsPending) {
       // Someone voted, was it this player?
-      if (this.state.matchData.getPlayer1().id === this.state.playerID) {
+      if (this.state.matchData.getPlayer1().getID() === this.state.playerID) {
         if (activeGame.getPlayer1Voted()) {
           // Waiting on other votes
           console.log("Awaiting final results");
@@ -156,21 +159,22 @@ class Round extends Component<RoundProps, RoundState> {
       .then((matchDataInit: MatchDataIntf) => {
         this.setState({ matchData: new MatchData(matchDataInit) });
         this.setState({
-          timeRemaining: this.state.matchData.getMatch().endTime - Date.now(),
+          timeRemaining:
+            this.state.matchData.getMatch().getEndTime() - Date.now(),
         });
 
         if (
           this.props.match.params.playerID ===
-          this.state.matchData.getPlayer1().id
+          this.state.matchData.getPlayer1().getID()
         ) {
           this.setState({
-            playerID: this.state.matchData.getPlayer1().id,
-            opponentID: this.state.matchData.getPlayer2().id,
+            playerID: this.state.matchData.getPlayer1().getID(),
+            opponentID: this.state.matchData.getPlayer2().getID(),
           });
         } else {
           this.setState({
-            playerID: this.state.matchData.getPlayer2().id,
-            opponentID: this.state.matchData.getPlayer1().id,
+            playerID: this.state.matchData.getPlayer2().getID(),
+            opponentID: this.state.matchData.getPlayer1().getID(),
           });
         }
         this.setResultStatusMsg();
@@ -187,13 +191,15 @@ class Round extends Component<RoundProps, RoundState> {
         if (game.getWinningPlayerID() === "-1") {
           winners.push("");
         } else if (
-          game.getWinningPlayerID() === this.state.matchData.getPlayer1().id
+          game.getWinningPlayerID() ===
+          this.state.matchData.getPlayer1().getID()
         ) {
-          winners.push(this.state.matchData.getPlayer1().name);
+          winners.push(this.state.matchData.getPlayer1().getName());
         } else if (
-          game.getWinningPlayerID() === this.state.matchData.getPlayer2().id
+          game.getWinningPlayerID() ===
+          this.state.matchData.getPlayer2().getID()
         ) {
-          winners.push(this.state.matchData.getPlayer2().name);
+          winners.push(this.state.matchData.getPlayer2().getName());
         } else {
           winners.push("Error!");
         }

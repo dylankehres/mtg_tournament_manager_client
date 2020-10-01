@@ -21,10 +21,10 @@ const Pairings = (props: PairingsProps) => {
           </thead>
           <tbody>
             {props.pairings.map((matchData, index) => (
-              <tr key={matchData.getMatch().id}>
+              <tr key={matchData.getMatch().getID()}>
                 <td>{index + 1}</td>
-                <td>{matchData.getPlayer1().name}</td>
-                <td>{matchData.getPlayer2().name}</td>
+                <td>{matchData.getPlayer1().getName()}</td>
+                <td>{matchData.getPlayer2().getName()}</td>
               </tr>
             ))}
           </tbody>
