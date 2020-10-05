@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Button, Table } from "react-bootstrap";
-import Timer from "react-compound-timer";
+import RoundTimer from "../roundTimer";
 import LoadingDiv from "../../loadingDiv";
 import { MatchData, MatchDataIntf } from "../../dtos/matchData";
 import { Game, ResultStatus, ResultStatusMsg } from "../../dtos/game";
@@ -45,6 +45,11 @@ class Round extends Component<RoundProps, RoundState> {
     this.reportResults(this.state.opponentID);
   }
 
+  gameDraw() {
+    console.log("Game Draw");
+    this.reportResults("Draw");
+  }
+
   reportResults(winnerID: string) {
     console.log("Report results");
     console.log("Game List: ", this.state.matchData.getGameList());
@@ -82,10 +87,6 @@ class Round extends Component<RoundProps, RoundState> {
       .catch((err) =>
         console.log("Ajax Error in round.tsx reportResults", err)
       );
-  }
-
-  gameDraw() {
-    console.log("Game Draw");
   }
 
   hasVoted(): boolean {
@@ -163,6 +164,8 @@ class Round extends Component<RoundProps, RoundState> {
             this.state.matchData.getMatch().getEndTime() - Date.now(),
         });
 
+        console.log("setState timeRemaining: ", this.state.timeRemaining);
+
         if (
           this.props.match.params.playerID ===
           this.state.matchData.getPlayer1().getID()
@@ -200,6 +203,8 @@ class Round extends Component<RoundProps, RoundState> {
           this.state.matchData.getPlayer2().getID()
         ) {
           winners.push(this.state.matchData.getPlayer2().getName());
+        } else if (game.getWinningPlayerID() === "Draw") {
+          winners.push("Draw");
         } else {
           winners.push("Error!");
         }
@@ -218,7 +223,7 @@ class Round extends Component<RoundProps, RoundState> {
   }
 
   render() {
-    if (this.state.timeRemaining === -1) {
+    if (this.state.playerID === "") {
       return <LoadingDiv />;
     }
     return (
@@ -231,17 +236,12 @@ class Round extends Component<RoundProps, RoundState> {
               </th>
               <th></th>
               <th>
-                <Timer
+                <RoundTimer
                   initialTime={this.state.timeRemaining}
-                  direction="backward"
-                >
-                  {() => (
-                    <React.Fragment>
-                      <Timer.Minutes /> {"minutes "}
-                      <Timer.Seconds /> {"seconds"}
-                    </React.Fragment>
-                  )}
-                </Timer>
+                  matchComplete={
+                    this.state.resultStatus === ResultStatus.ResultsFinal
+                  }
+                />
               </th>
             </tr>
           </thead>

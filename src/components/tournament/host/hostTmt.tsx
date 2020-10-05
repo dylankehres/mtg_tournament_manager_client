@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Form, Dropdown, Button } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
+import { Formats } from "../../dtos/tournament";
 
 type HostTmtProps = {
   serverAddress: string;
@@ -10,6 +11,8 @@ type HostTmtState = {
   id: string;
   name: string;
   roomCode: string;
+  rounds: string;
+  games: string;
   format: string;
 };
 
@@ -18,21 +21,17 @@ class HostTmt extends Component<HostTmtProps, HostTmtState> {
     id: "",
     name: "",
     roomCode: "",
+    rounds: "3",
+    games: "3",
     format: "Select Format",
   };
-
-  formats = [
-    { name: "Standard", id: 1 },
-    { name: "Pioneer", id: 2 },
-    { name: "Modern", id: 3 },
-    { name: "Legacy", id: 4 },
-    { name: "Commander", id: 5 },
-  ];
 
   constructor(props: HostTmtProps) {
     super(props);
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleRoomChange = this.handleRoomChange.bind(this);
+    this.handleRoundsChange = this.handleRoundsChange.bind(this);
+    this.handleGamesChange = this.handleGamesChange.bind(this);
     this.handleFormatSelect = this.handleFormatSelect.bind(this);
   }
 
@@ -42,6 +41,14 @@ class HostTmt extends Component<HostTmtProps, HostTmtState> {
 
   handleRoomChange(event: any): void {
     this.setState({ roomCode: event.target.value });
+  }
+
+  handleRoundsChange(event: any): void {
+    this.setState({ rounds: event.target.value });
+  }
+
+  handleGamesChange(event: any): void {
+    this.setState({ games: event.target.value });
   }
 
   handleFormatSelect(eventKey: any): void {
@@ -116,18 +123,34 @@ class HostTmt extends Component<HostTmtProps, HostTmtState> {
               onChange={this.handleRoomChange}
             ></Form.Control>
           </Form.Group>
+
+          <Form.Group className="m-2" style={{ width: "300px" }}>
+            <Form.Label>Number of rounds</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter number of rounds"
+              value={this.state.rounds}
+              onChange={this.handleRoundsChange}
+            ></Form.Control>
+          </Form.Group>
+          <Form.Group className="m-2" style={{ width: "300px" }}>
+            <Form.Label>Games per round</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter number of games"
+              value={this.state.games}
+              onChange={this.handleGamesChange}
+            ></Form.Control>
+          </Form.Group>
+
           <Dropdown className="m-2" onSelect={this.handleFormatSelect}>
             <Dropdown.Toggle variant="success" id="dropdown-basic">
               {this.state.format}
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              {this.formats.map((format) => (
-                <Dropdown.Item
-                  key={format.id}
-                  // value={format.name}
-                  eventKey={format.name}
-                >
-                  {format.name}
+              {Object.keys(Formats).map((format) => (
+                <Dropdown.Item key={Formats[format]} eventKey={Formats[format]}>
+                  {Formats[format]}
                 </Dropdown.Item>
               ))}
             </Dropdown.Menu>
@@ -136,7 +159,6 @@ class HostTmt extends Component<HostTmtProps, HostTmtState> {
             className="btn btn-primary m-2 "
             onClick={() => this.handleOpenTmt()}
             disabled={this.getOpenDisabled()}
-            // href={`/host/${this.state.id}`}
           >
             Open Tournament
           </Button>

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Form, Dropdown, Button, Table } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
 import TmtList from "../tmtList";
+import { Formats } from "../../dtos/tournament";
 
 type JoinTmtProps = {
   serverAddress: string;
@@ -23,14 +24,6 @@ class JoinTmt extends Component<JoinTmtProps, JoinTmtState> {
     format: "Select Format",
     deckName: "",
   };
-
-  formats = [
-    { name: "Standard", id: 1 },
-    { name: "Pioneer", id: 2 },
-    { name: "Modern", id: 3 },
-    { name: "Legacy", id: 4 },
-    { name: "Commander", id: 5 },
-  ];
 
   constructor(props: JoinTmtProps) {
     super(props);
@@ -142,13 +135,13 @@ class JoinTmt extends Component<JoinTmtProps, JoinTmtState> {
                         {this.state.format}
                       </Dropdown.Toggle>
                       <Dropdown.Menu>
-                        {this.formats.map((format) => (
+                        {Object.keys(Formats).map((format) => (
                           <Dropdown.Item
-                            key={format.id}
+                            key={Formats[format]}
                             // value={format.name}
-                            eventKey={format.name}
+                            eventKey={Formats[format]}
                           >
-                            {format.name}
+                            {Formats[format]}
                           </Dropdown.Item>
                         ))}
                       </Dropdown.Menu>

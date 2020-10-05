@@ -3,7 +3,7 @@ import { Button, Form } from "react-bootstrap";
 import PlayerList from "../playerList";
 import Pairings from "../pairings";
 import { MatchData, MatchDataIntf } from "../../dtos/matchData";
-import { Tournament } from "../../dtos/tournament";
+import { Tournament, TournamentIntf } from "../../dtos/tournament";
 
 type StartTmtProps = {
   serverAddress: string;
@@ -22,7 +22,7 @@ type StartTmtState = {
 class StartTmt extends Component<StartTmtProps, StartTmtState> {
   state = {
     roomCode: "",
-    pairings: [],
+    pairings: new Array<MatchData>(),
   };
 
   handleCancelTmt() {
@@ -39,7 +39,7 @@ class StartTmt extends Component<StartTmtProps, StartTmtState> {
       .catch((err) => console.log("Fetch Error in handleCancelTmt", err));
   }
 
-  handleStartTmt() {
+  generatePairings() {
     fetch(
       `${this.props.serverAddress}/host/pairings/${this.props.match.params.tmtID}`,
       {
@@ -58,16 +58,18 @@ class StartTmt extends Component<StartTmtProps, StartTmtState> {
         );
         this.setState({ pairings });
       })
-      .catch((err) => console.log("Fetch Error in handleStartTmt", err));
+      .catch((err) => console.log("Fetch Error in generatePairings", err));
   }
 
   getPairings() {
     this.getTournamentData()
-      .then((tournament: Tournament) => {
-        if (tournament.roomCode === "") {
+      .then((initTournament: TournamentIntf) => {
+        const tournament: Tournament = new Tournament(initTournament);
+
+        if (tournament.getRoomCode() === "") {
           alert("Something went wrong. Please try that again.");
         } else {
-          this.setState({ roomCode: tournament.roomCode });
+          this.setState({ roomCode: tournament.getRoomCode() });
           fetch(`${this.props.serverAddress}/pairings/${this.state.roomCode}`, {
             method: "GET",
             headers: {
@@ -104,6 +106,16 @@ class StartTmt extends Component<StartTmtProps, StartTmtState> {
     ).then((res) => res.json());
   }
 
+  canStartRound(): boolean {
+    for (let matchData of this.state.pairings) {
+      if (matchData.getMatch().getActive()) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   componentDidMount() {
     this.getPairings();
   }
@@ -120,6 +132,13 @@ class StartTmt extends Component<StartTmtProps, StartTmtState> {
             key={"pairings_" + this.state.roomCode}
           />
           <Form>
+            <Button
+              className="btn btn-primary m-2"
+              onClick={() => this.generatePairings()}
+              href="/host"
+            >
+              Start Next Round
+            </Button>
             <Button
               className="btn btn-danger m-2"
               onClick={() => this.handleCancelTmt()}
@@ -141,7 +160,7 @@ class StartTmt extends Component<StartTmtProps, StartTmtState> {
           <Form>
             <Button
               className="btn btn-primary m-2"
-              onClick={() => this.handleStartTmt()}
+              onClick={() => this.generatePairings()}
             >
               Start Tournament
             </Button>

@@ -5,6 +5,7 @@ interface PlayerIntf {
   roomCode: string;
   format: string;
   deckName: string;
+  points: number;
 }
 
 class Player {
@@ -14,6 +15,7 @@ class Player {
   private roomCode: string;
   private format: string;
   private deckName: string;
+  private points: number;
 
   constructor(initData?: PlayerIntf) {
     if (initData) {
@@ -23,6 +25,7 @@ class Player {
       this.roomCode = initData.roomCode;
       this.format = initData.format;
       this.deckName = initData.deckName;
+      this.points = initData.points;
     } else {
       this.id = "";
       this.tournamentID = "";
@@ -30,6 +33,7 @@ class Player {
       this.roomCode = "";
       this.format = "";
       this.deckName = "";
+      this.points = 0;
     }
   }
 
@@ -55,6 +59,10 @@ class Player {
 
   getDeckName(): string {
     return this.deckName;
+  }
+
+  getPoints(): number {
+    return this.points;
   }
 }
 

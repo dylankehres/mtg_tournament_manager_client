@@ -5,6 +5,7 @@ interface MatchIntf {
   player2ID: string;
   player1Wins: number;
   player2Wins: number;
+  draws: number;
   player1Ready: boolean;
   player2Ready: boolean;
   tableNum: number;
@@ -23,6 +24,7 @@ class Match {
   private player2ID: string;
   private player1Wins: number;
   private player2Wins: number;
+  private draws: number;
   private player1Ready: boolean;
   private player2Ready: boolean;
   private tableNum: number;
@@ -41,6 +43,7 @@ class Match {
       this.player2ID = initData.player2ID;
       this.player1Wins = initData.player1Wins;
       this.player2Wins = initData.player2Wins;
+      this.draws = initData.draws;
       this.player1Ready = initData.player1Ready;
       this.player2Ready = initData.player2Ready;
       this.tableNum = initData.tableNum;
@@ -57,6 +60,7 @@ class Match {
       this.player2ID = "";
       this.player1Wins = 0;
       this.player2Wins = 0;
+      this.draws = 0;
       this.player1Ready = false;
       this.player2Ready = false;
       this.tableNum = 0;
@@ -91,6 +95,10 @@ class Match {
 
   getPlayer2Wins(): number {
     return this.player2Wins;
+  }
+
+  getDraws(): number {
+    return this.draws;
   }
 
   getPlayer1Ready(): boolean {

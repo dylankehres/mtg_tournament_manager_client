@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Table from "react-bootstrap/Table";
-import { Tournament } from "../dtos/tournament";
+import { Tournament, TournamentIntf } from "../dtos/tournament";
 
 type TmtListProps = {
   serverAddress: string;
@@ -24,7 +24,9 @@ class TmtList extends Component<TmtListProps, TmtListState> {
       },
     })
       .then((res) => res.json())
-      .then((tmtList: Tournament[]) => {
+      .then((initTmtList: TournamentIntf[]) => {
+        const tmtList: Tournament[] = [];
+        initTmtList.forEach((initTmt) => tmtList.push(new Tournament(initTmt)));
         this.setState({ tmtList });
       })
       .catch((err) =>
@@ -46,10 +48,10 @@ class TmtList extends Component<TmtListProps, TmtListState> {
             </thead>
             <tbody>
               {this.state.tmtList.map((tmt: Tournament) => (
-                <tr key={tmt.id}>
-                  <td>{tmt.name}</td>
-                  <td>{tmt.format}</td>
-                  <td>{tmt.roomCode}</td>
+                <tr key={tmt.getID()}>
+                  <td>{tmt.getName()}</td>
+                  <td>{tmt.getFormat()}</td>
+                  <td>{tmt.getRoomCode()}</td>
                 </tr>
               ))}
             </tbody>

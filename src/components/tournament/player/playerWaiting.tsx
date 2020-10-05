@@ -25,7 +25,7 @@ type PlayerWaitingState = {
 
 class PlayerWaiting extends Component<PlayerWaitingProps, PlayerWaitingState> {
   state = {
-    pairings: [],
+    pairings: new Array<MatchData>(),
     matchData: new MatchData(),
     currPlayer: new Player(),
     player1: new Player(),
