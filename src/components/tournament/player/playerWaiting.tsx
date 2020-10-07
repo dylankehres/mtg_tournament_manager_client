@@ -119,7 +119,9 @@ class PlayerWaiting extends Component<PlayerWaitingProps, PlayerWaitingState> {
     fetch(
       `${
         this.props.serverAddress
-      }/match/ready/${this.state.currPlayer.getID()}`,
+      }/match/ready/${this.state.currPlayer.getID()}/${this.state.matchData
+        .getMatch()
+        .getRoundNum()}`,
       {
         method: "POST",
         headers: {

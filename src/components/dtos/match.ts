@@ -9,12 +9,13 @@ interface MatchIntf {
   player1Ready: boolean;
   player2Ready: boolean;
   tableNum: number;
-  activeboolean: boolean;
+  active: boolean;
   gameKeys: string[];
   activeGameID: string;
   startTime: number;
   endTime: number;
   timeLimit: number;
+  roundNum: number;
 }
 
 class Match {
@@ -34,6 +35,7 @@ class Match {
   private startTime: number;
   private endTime: number;
   private timeLimit: number;
+  private roundNum: number;
 
   constructor(initData?: MatchIntf) {
     if (initData) {
@@ -47,12 +49,13 @@ class Match {
       this.player1Ready = initData.player1Ready;
       this.player2Ready = initData.player2Ready;
       this.tableNum = initData.tableNum;
-      this.active = initData.activeboolean;
+      this.active = initData.active;
       this.gameKeys = initData.gameKeys;
       this.activeGameID = initData.activeGameID;
       this.startTime = initData.startTime;
       this.endTime = initData.endTime;
       this.timeLimit = initData.timeLimit;
+      this.roundNum = initData.roundNum;
     } else {
       this.id = "";
       this.tournamentID = "";
@@ -70,6 +73,7 @@ class Match {
       this.startTime = 0;
       this.endTime = 0;
       this.timeLimit = 0;
+      this.roundNum = 0;
     }
   }
 
@@ -135,6 +139,10 @@ class Match {
 
   getTimeLimit(): number {
     return this.timeLimit;
+  }
+
+  getRoundNum(): number {
+    return this.roundNum;
   }
 }
 

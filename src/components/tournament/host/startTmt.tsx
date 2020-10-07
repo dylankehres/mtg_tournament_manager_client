@@ -135,7 +135,6 @@ class StartTmt extends Component<StartTmtProps, StartTmtState> {
             <Button
               className="btn btn-primary m-2"
               onClick={() => this.generatePairings()}
-              href="/host"
             >
               Start Next Round
             </Button>

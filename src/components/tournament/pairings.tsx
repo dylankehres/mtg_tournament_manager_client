@@ -17,14 +17,33 @@ const Pairings = (props: PairingsProps) => {
               <th>Table #</th>
               <th>Player Name</th>
               <th>Player Name</th>
+              <th>Results</th>
             </tr>
           </thead>
           <tbody>
-            {props.pairings.map((matchData, index) => (
+            {props.pairings.map((matchData) => (
               <tr key={matchData.getMatch().getID()}>
-                <td>{index + 1}</td>
-                <td>{matchData.getPlayer1().getName()}</td>
-                <td>{matchData.getPlayer2().getName()}</td>
+                <td>{matchData.getMatch().getTableNum()}</td>
+                <td>
+                  {matchData.getPlayer1().getName() +
+                    " (" +
+                    matchData.getPlayer1().getPoints() +
+                    " pts)"}
+                </td>
+                <td>
+                  {matchData.getPlayer2().getName() +
+                    " (" +
+                    matchData.getPlayer2().getPoints() +
+                    " pts)"}
+                </td>
+                <td>
+                  {matchData.getMatch().getPlayer1Wins() +
+                    "-" +
+                    matchData.getMatch().getPlayer2Wins() +
+                    (matchData.getMatch().getDraws() > 0
+                      ? "-" + matchData.getMatch().getDraws()
+                      : "")}
+                </td>
               </tr>
             ))}
           </tbody>

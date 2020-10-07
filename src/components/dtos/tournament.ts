@@ -3,8 +3,9 @@ interface TournamentIntf {
   name: string;
   roomCode: string;
   format: string;
-  rounds: number;
-  games: number;
+  numRounds: number;
+  numGames: number;
+  currRound: number;
 }
 
 class Tournament {
@@ -12,8 +13,9 @@ class Tournament {
   private name: string;
   private roomCode: string;
   private format: string;
-  private rounds: number;
-  private games: number;
+  private numRounds: number;
+  private numGames: number;
+  private currRound: number;
 
   constructor(initData?: TournamentIntf) {
     if (initData) {
@@ -21,15 +23,17 @@ class Tournament {
       this.name = initData.name;
       this.roomCode = initData.roomCode;
       this.format = initData.format;
-      this.rounds = initData.rounds;
-      this.games = initData.games;
+      this.numRounds = initData.numRounds;
+      this.numGames = initData.numGames;
+      this.currRound = initData.currRound;
     } else {
       this.id = "";
       this.name = "";
       this.roomCode = "";
       this.format = "";
-      this.rounds = 0;
-      this.games = 0;
+      this.numRounds = 0;
+      this.numGames = 0;
+      this.currRound = 0;
     }
   }
 
@@ -49,12 +53,16 @@ class Tournament {
     return this.format;
   }
 
-  getRounds(): number {
-    return this.rounds;
+  getNumRounds(): number {
+    return this.numRounds;
   }
 
-  getGames(): number {
-    return this.games;
+  getNumGames(): number {
+    return this.numGames;
+  }
+
+  getCurrRound(): number {
+    return this.currRound;
   }
 }
 

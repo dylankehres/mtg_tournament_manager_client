@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Button, Table } from "react-bootstrap";
+import { Redirect } from "react-router-dom";
 import RoundTimer from "../roundTimer";
 import LoadingDiv from "../../loadingDiv";
 import { MatchData, MatchDataIntf } from "../../dtos/matchData";
@@ -15,7 +16,6 @@ type RoundProps = {
 };
 
 type RoundState = {
-  roundNum: number;
   playerID: string;
   opponentID: string;
   resultStatus: number;
@@ -27,7 +27,6 @@ type RoundState = {
 
 class Round extends Component<RoundProps, RoundState> {
   state = {
-    roundNum: 1,
     playerID: "",
     opponentID: "",
     resultStatus: -1,
@@ -58,7 +57,9 @@ class Round extends Component<RoundProps, RoundState> {
     const currentGameID = currentGame.getID();
 
     fetch(
-      `${this.props.serverAddress}/match/gameResults/${this.props.match.params.playerID}/${winnerID}`,
+      `${this.props.serverAddress}/match/gameResults/${
+        this.props.match.params.playerID
+      }/${winnerID}/${this.state.matchData.getMatch().getRoundNum()}`,
       {
         method: "POST",
         headers: {
@@ -226,18 +227,31 @@ class Round extends Component<RoundProps, RoundState> {
     if (this.state.playerID === "") {
       return <LoadingDiv />;
     }
+    if (
+      !this.state.matchData.getMatch().getActive() &&
+      this.state.matchData.getMatch().getPlayer1Ready() &&
+      this.state.matchData.getMatch().getPlayer2Ready()
+    ) {
+      return <Redirect to={`/join/${this.state.playerID}`} />;
+    }
     return (
       <div className="m-2">
         <table>
           <thead>
             <tr>
               <th>
-                <h3>{"Round " + this.state.roundNum}</h3>
+                <h3>
+                  {"Round " + this.state.matchData.getMatch().getRoundNum()}
+                </h3>
               </th>
               <th></th>
               <th>
                 <RoundTimer
                   initialTime={this.state.timeRemaining}
+                  playersReady={
+                    this.state.matchData.getMatch().getPlayer1Ready() &&
+                    this.state.matchData.getMatch().getPlayer2Ready()
+                  }
                   matchComplete={
                     this.state.resultStatus === ResultStatus.ResultsFinal
                   }
