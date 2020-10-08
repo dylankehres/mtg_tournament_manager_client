@@ -16,6 +16,7 @@ interface MatchIntf {
   endTime: number;
   timeLimit: number;
   roundNum: number;
+  numGames: number;
 }
 
 class Match {
@@ -36,6 +37,7 @@ class Match {
   private endTime: number;
   private timeLimit: number;
   private roundNum: number;
+  private numGames: number;
 
   constructor(initData?: MatchIntf) {
     if (initData) {
@@ -56,6 +58,7 @@ class Match {
       this.endTime = initData.endTime;
       this.timeLimit = initData.timeLimit;
       this.roundNum = initData.roundNum;
+      this.numGames = initData.numGames;
     } else {
       this.id = "";
       this.tournamentID = "";
@@ -74,6 +77,7 @@ class Match {
       this.endTime = 0;
       this.timeLimit = 0;
       this.roundNum = 0;
+      this.numGames = 0;
     }
   }
 
@@ -143,6 +147,10 @@ class Match {
 
   getRoundNum(): number {
     return this.roundNum;
+  }
+
+  getNumGames(): number {
+    return this.numGames;
   }
 }
 

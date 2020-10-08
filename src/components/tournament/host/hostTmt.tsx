@@ -11,8 +11,8 @@ type HostTmtState = {
   id: string;
   name: string;
   roomCode: string;
-  rounds: string;
-  games: string;
+  numRounds: string;
+  numGames: string;
   format: string;
 };
 
@@ -21,8 +21,8 @@ class HostTmt extends Component<HostTmtProps, HostTmtState> {
     id: "",
     name: "",
     roomCode: "",
-    rounds: "3",
-    games: "3",
+    numRounds: "3",
+    numGames: "3",
     format: "Select Format",
   };
 
@@ -30,8 +30,8 @@ class HostTmt extends Component<HostTmtProps, HostTmtState> {
     super(props);
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleRoomChange = this.handleRoomChange.bind(this);
-    this.handleRoundsChange = this.handleRoundsChange.bind(this);
-    this.handleGamesChange = this.handleGamesChange.bind(this);
+    this.handleNumRoundsChange = this.handleNumRoundsChange.bind(this);
+    this.handleNumGamesChange = this.handleNumGamesChange.bind(this);
     this.handleFormatSelect = this.handleFormatSelect.bind(this);
   }
 
@@ -43,12 +43,12 @@ class HostTmt extends Component<HostTmtProps, HostTmtState> {
     this.setState({ roomCode: event.target.value });
   }
 
-  handleRoundsChange(event: any): void {
-    this.setState({ rounds: event.target.value });
+  handleNumRoundsChange(event: any): void {
+    this.setState({ numRounds: event.target.value });
   }
 
-  handleGamesChange(event: any): void {
-    this.setState({ games: event.target.value });
+  handleNumGamesChange(event: any): void {
+    this.setState({ numGames: event.target.value });
   }
 
   handleFormatSelect(eventKey: any): void {
@@ -129,8 +129,8 @@ class HostTmt extends Component<HostTmtProps, HostTmtState> {
             <Form.Control
               type="text"
               placeholder="Enter number of rounds"
-              value={this.state.rounds}
-              onChange={this.handleRoundsChange}
+              value={this.state.numRounds}
+              onChange={this.handleNumRoundsChange}
             ></Form.Control>
           </Form.Group>
           <Form.Group className="m-2" style={{ width: "300px" }}>
@@ -138,8 +138,8 @@ class HostTmt extends Component<HostTmtProps, HostTmtState> {
             <Form.Control
               type="text"
               placeholder="Enter number of games"
-              value={this.state.games}
-              onChange={this.handleGamesChange}
+              value={this.state.numGames}
+              onChange={this.handleNumGamesChange}
             ></Form.Control>
           </Form.Group>
 
