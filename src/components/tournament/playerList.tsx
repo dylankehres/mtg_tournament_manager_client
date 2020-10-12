@@ -56,7 +56,9 @@ class PlayerList extends Component<PlayerListProps, PlayerListState> {
               {this.state.playerList.map((player: Player, index) => (
                 <tr key={player.getID()}>
                   <td>{index + 1}</td>
-                  <td>{player.getName()}</td>
+                  <td>
+                    {player.getName() + " (" + player.getPoints() + " pts)"}
+                  </td>
                   <td>{player.getDeckName()}</td>
                 </tr>
               ))}

@@ -11,6 +11,7 @@ const Pairings = (props: PairingsProps) => {
   if (props.pairings.length > 0) {
     return (
       <div className="m-2" style={{ width: "450px" }}>
+        <h3>{"Round " + props.pairings[0].getMatch().getRoundNum()}</h3>
         <Table striped bordered hover size="sm">
           <thead>
             <tr>

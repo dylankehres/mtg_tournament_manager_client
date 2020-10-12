@@ -9,7 +9,7 @@ interface MatchIntf {
   player1Ready: boolean;
   player2Ready: boolean;
   tableNum: number;
-  active: boolean;
+  matchStatus: number;
   gameKeys: string[];
   activeGameID: string;
   startTime: number;
@@ -17,6 +17,12 @@ interface MatchIntf {
   timeLimit: number;
   roundNum: number;
   numGames: number;
+}
+
+enum MatchStatus {
+  AwaitingPlayers,
+  InProgress,
+  Complete,
 }
 
 class Match {
@@ -30,7 +36,7 @@ class Match {
   private player1Ready: boolean;
   private player2Ready: boolean;
   private tableNum: number;
-  private active: boolean;
+  private matchStatus: number;
   private gameKeys: string[];
   private activeGameID: string;
   private startTime: number;
@@ -51,7 +57,7 @@ class Match {
       this.player1Ready = initData.player1Ready;
       this.player2Ready = initData.player2Ready;
       this.tableNum = initData.tableNum;
-      this.active = initData.active;
+      this.matchStatus = initData.matchStatus;
       this.gameKeys = initData.gameKeys;
       this.activeGameID = initData.activeGameID;
       this.startTime = initData.startTime;
@@ -70,7 +76,7 @@ class Match {
       this.player1Ready = false;
       this.player2Ready = false;
       this.tableNum = 0;
-      this.active = false;
+      this.matchStatus = 0;
       this.gameKeys = [];
       this.activeGameID = "";
       this.startTime = 0;
@@ -121,8 +127,8 @@ class Match {
     return this.tableNum;
   }
 
-  getActive(): boolean {
-    return this.active;
+  getMatchStatus(): number {
+    return this.matchStatus;
   }
 
   getGameKeys(): string[] {
@@ -152,7 +158,17 @@ class Match {
   getNumGames(): number {
     return this.numGames;
   }
+
+  getPlayerReadyByID(playerID: string): boolean {
+    if (this.player1ID === playerID) {
+      return this.player1Ready;
+    } else if (this.player2ID === playerID) {
+      return this.player2Ready;
+    }
+
+    return false;
+  }
 }
 
-export { Match };
+export { Match, MatchStatus };
 export type { MatchIntf };

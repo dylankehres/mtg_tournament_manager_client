@@ -165,7 +165,7 @@ class JoinTmt extends Component<JoinTmtProps, JoinTmtState> {
       );
     } else {
       console.log("Join tmt redirect");
-      return <Redirect to={`/join/${this.state.id}`} />;
+      return <Redirect to={`/player/${this.state.id}`} />;
     }
   }
 }

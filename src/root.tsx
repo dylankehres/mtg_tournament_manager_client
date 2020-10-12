@@ -45,7 +45,7 @@ class Root extends Component<RootProps, RootState> {
           <Route exact path="/" component={Home} />
           <PropsRoute exact path="/join" component={JoinTmt} />
           <PropsRoute exact path="/tournament" component={Tournament} />
-          <PropsRoute path="/join/:playerID" component={PlayerWaiting} />
+          <PropsRoute path="/player/:playerID" component={PlayerWaiting} />
           <PropsRoute exact path="/host" component={HostTmt} />
           <PropsRoute exact path="/host/:tmtID" component={StartTmt} />
           <PropsRoute path="/playerlist" component={PlayerList} />

@@ -5,6 +5,7 @@ import PlayerList from "../playerList";
 import PlayerMatch from "./playerMatch";
 import { Player, PlayerIntf } from "../../dtos/player";
 import { MatchData, MatchDataIntf } from "../../dtos/matchData";
+import { Redirect } from "react-router-dom";
 
 type PlayerWaitingProps = {
   serverAddress: string;
@@ -131,7 +132,10 @@ class PlayerWaiting extends Component<PlayerWaitingProps, PlayerWaitingState> {
       }
     )
       .then((res) => res.json())
-      .then(() => {})
+      .then((matchDataInit: MatchDataIntf) => {
+        console.log("Player ready: ", matchDataInit);
+        this.setState({ matchData: new MatchData(matchDataInit) });
+      })
       .catch((err) =>
         console.log("Fetch Error in readyUp for playerWaiting.jsx", err)
       );
@@ -143,7 +147,12 @@ class PlayerWaiting extends Component<PlayerWaitingProps, PlayerWaitingState> {
   }
 
   render() {
-    if (this.state.pairings.length > 0) {
+    if (
+      this.state.pairings.length > 0 &&
+      !this.state.matchData
+        .getMatch()
+        .getPlayerReadyByID(this.state.currPlayer.getID())
+    ) {
       return (
         <React.Fragment>
           <PlayerMatch
@@ -159,15 +168,21 @@ class PlayerWaiting extends Component<PlayerWaitingProps, PlayerWaitingState> {
           />
           <Button
             className="btn btn-success m-2"
-            href={`/round/${this.state.currPlayer.getID()}`}
             onClick={() => this.readyUp()}
           >
             Ready
           </Button>
         </React.Fragment>
       );
+    } else if (
+      this.state.pairings.length > 0 &&
+      this.state.matchData
+        .getMatch()
+        .getPlayerReadyByID(this.state.currPlayer.getID()) &&
+      this.state.matchData.getGameList().length === 1
+    ) {
+      return <Redirect to={`/round/${this.state.currPlayer.getID()}`} />;
     } else if (this.state.currPlayer.getRoomCode() !== "") {
-      console.log("Room code: ", this.state.currPlayer.getRoomCode());
       return (
         <div className="m-2">
           <PlayerList

@@ -4,6 +4,7 @@ import PlayerList from "../playerList";
 import Pairings from "../pairings";
 import { MatchData, MatchDataIntf } from "../../dtos/matchData";
 import { Tournament, TournamentIntf } from "../../dtos/tournament";
+import { MatchStatus } from "components/dtos/match";
 
 type StartTmtProps = {
   serverAddress: string;
@@ -108,7 +109,10 @@ class StartTmt extends Component<StartTmtProps, StartTmtState> {
 
   canStartRound(): boolean {
     for (let matchData of this.state.pairings) {
-      if (matchData.getMatch().getActive()) {
+      if (
+        matchData.getMatch().getMatchStatus() ===
+        (MatchStatus.AwaitingPlayers || MatchStatus.InProgress)
+      ) {
         return false;
       }
     }
@@ -134,6 +138,7 @@ class StartTmt extends Component<StartTmtProps, StartTmtState> {
           <Form>
             <Button
               className="btn btn-primary m-2"
+              disabled={!this.canStartRound()}
               onClick={() => this.generatePairings()}
             >
               Start Next Round

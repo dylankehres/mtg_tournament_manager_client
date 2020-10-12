@@ -5,6 +5,7 @@ import RoundTimer from "../roundTimer";
 import LoadingDiv from "../../loadingDiv";
 import { MatchData, MatchDataIntf } from "../../dtos/matchData";
 import { Game, ResultStatus, ResultStatusMsg } from "../../dtos/game";
+import { MatchStatus } from "components/dtos/match";
 
 type RoundProps = {
   serverAddress: string;
@@ -189,7 +190,6 @@ class Round extends Component<RoundProps, RoundState> {
 
   buildWinnersList() {
     let winners = [];
-    // this.state.matchData.getGameList().reverse();
     this.state.matchData.getGameList().forEach((game) => {
       if (game !== null) {
         if (game.getWinningPlayerID() === "-1") {
@@ -228,11 +228,9 @@ class Round extends Component<RoundProps, RoundState> {
       return <LoadingDiv />;
     }
     if (
-      !this.state.matchData.getMatch().getActive() &&
-      this.state.matchData.getMatch().getPlayer1Ready() &&
-      this.state.matchData.getMatch().getPlayer2Ready()
+      this.state.matchData.getMatch().getMatchStatus() === MatchStatus.Complete
     ) {
-      return <Redirect to={`/join/${this.state.playerID}`} />;
+      return <Redirect to={`/player/${this.state.playerID}`} />;
     }
     return (
       <div className="m-2">
