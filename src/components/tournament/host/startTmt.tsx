@@ -2,9 +2,11 @@ import React, { Component } from "react";
 import { Button, Form } from "react-bootstrap";
 import PlayerList from "../playerList";
 import Pairings from "../pairings";
+import FinalResults from "../finalResults";
 import { MatchData, MatchDataIntf } from "../../dtos/matchData";
-import { Tournament, TournamentIntf } from "../../dtos/tournament";
+import { Tournament, TournamentIntf, TournamentStatus } from "../../dtos/tournament";
 import { MatchStatus } from "components/dtos/match";
+import { Player, PlayerIntf } from "../../dtos/player";
 
 type StartTmtProps = {
   serverAddress: string;
@@ -16,14 +18,16 @@ type StartTmtProps = {
 };
 
 type StartTmtState = {
-  roomCode: string;
+  tournament: Tournament;
   pairings: MatchData[];
+  playerList: Player[]
 };
 
 class StartTmt extends Component<StartTmtProps, StartTmtState> {
   state = {
-    roomCode: "",
+    tournament: new Tournament(),
     pairings: new Array<MatchData>(),
+    playerList: new Array<Player>()
   };
 
   handleCancelTmt() {
@@ -70,8 +74,10 @@ class StartTmt extends Component<StartTmtProps, StartTmtState> {
         if (tournament.getRoomCode() === "") {
           alert("Something went wrong. Please try that again.");
         } else {
-          this.setState({ roomCode: tournament.getRoomCode() });
-          fetch(`${this.props.serverAddress}/pairings/${this.state.roomCode}`, {
+          this.setState({ tournament });
+          this.getPlayerList();
+
+          fetch(`${this.props.serverAddress}/pairings/${this.state.tournament.getRoomCode()}`, {
             method: "GET",
             headers: {
               Accept: "application/json",
@@ -107,17 +113,39 @@ class StartTmt extends Component<StartTmtProps, StartTmtState> {
     ).then((res) => res.json());
   }
 
-  canStartRound(): boolean {
+  getPlayerList(): void {
+    const playerList: Player[] = [];
+
+    fetch(`${this.props.serverAddress}/playerList/${this.state.tournament.getRoomCode()}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((initPlayerfList: PlayerIntf[]) => {
+        if (initPlayerfList.length > 0) {  
+          initPlayerfList.forEach((initPlayer) =>
+            playerList.push(new Player(initPlayer))
+          );
+          console.log("player list", playerList);
+          this.setState({ playerList });
+        }
+      });
+  }
+
+  roundInProgress(): boolean {
     for (let matchData of this.state.pairings) {
       if (
-        matchData.getMatch().getMatchStatus() ===
-        (MatchStatus.AwaitingPlayers || MatchStatus.InProgress)
+        matchData.getMatch().getMatchStatus() !==
+        MatchStatus.Complete
       ) {
-        return false;
+        return true;
       }
     }
 
-    return true;
+    return false;
   }
 
   componentDidMount() {
@@ -125,20 +153,22 @@ class StartTmt extends Component<StartTmtProps, StartTmtState> {
   }
 
   render() {
-    if (this.state.roomCode === "") {
+    if (this.state.tournament.getRoomCode() === "") {
       return <h2>Loading...</h2>;
+    } else if(this.state.tournament.getTournamentStatus() === TournamentStatus.Complete) {
+      return <FinalResults tournament={this.state.tournament} playerList={this.state.playerList}/>;
     } else if (this.state.pairings.length > 0) {
       return (
         <div className="m-2">
           <Pairings
             pairings={this.state.pairings}
             onGetPairings={this.getPairings}
-            key={"pairings_" + this.state.roomCode}
+            key={"pairings_" + this.state.tournament.getRoomCode()}
           />
           <Form>
             <Button
               className="btn btn-primary m-2"
-              disabled={!this.canStartRound()}
+              disabled={this.roundInProgress()}
               onClick={() => this.generatePairings()}
             >
               Start Next Round
@@ -158,8 +188,8 @@ class StartTmt extends Component<StartTmtProps, StartTmtState> {
         <div className="m-2">
           <PlayerList
             serverAddress={this.props.serverAddress}
-            roomCode={this.state.roomCode}
-            key={"playerList_" + this.state.roomCode}
+            roomCode={this.state.tournament.getRoomCode()}
+            key={"playerList_" + this.state.tournament.getRoomCode()}
           />
           <Form>
             <Button

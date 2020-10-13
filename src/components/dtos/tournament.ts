@@ -6,6 +6,20 @@ interface TournamentIntf {
   numRounds: number;
   numGames: number;
   currRound: number;
+  tournamentStatus: number;
+  active: boolean
+}
+
+enum Formats {
+  Standard = "Standard",
+  Pioneer = "Pioneer",
+  Modern = "Modern",
+  Legacy = "Legacy",
+  EDH = "Commander",
+}
+
+enum TournamentStatus {
+  AwaitingStart, InProgress, Complete
 }
 
 class Tournament {
@@ -16,6 +30,8 @@ class Tournament {
   private numRounds: number;
   private numGames: number;
   private currRound: number;
+  private tournamentStatus: number;
+  private active: boolean;
 
   constructor(initData?: TournamentIntf) {
     if (initData) {
@@ -26,6 +42,8 @@ class Tournament {
       this.numRounds = initData.numRounds;
       this.numGames = initData.numGames;
       this.currRound = initData.currRound;
+      this.tournamentStatus = initData.tournamentStatus;
+      this.active = initData.active;
     } else {
       this.id = "";
       this.name = "";
@@ -34,6 +52,8 @@ class Tournament {
       this.numRounds = 0;
       this.numGames = 0;
       this.currRound = 0;
+      this.tournamentStatus = 0;
+      this.active = false;
     }
   }
 
@@ -64,15 +84,15 @@ class Tournament {
   getCurrRound(): number {
     return this.currRound;
   }
+
+  getTournamentStatus(): number {
+    return this.tournamentStatus;
+  }
+
+  getActive(): boolean {
+    return this.active;
+  }
 }
 
-enum Formats {
-  Standard = "Standard",
-  Pioneer = "Pioneer",
-  Modern = "Modern",
-  Legacy = "Legacy",
-  EDH = "Commander",
-}
-
-export { Tournament, Formats };
+export { Tournament, TournamentStatus, Formats };
 export type { TournamentIntf };
