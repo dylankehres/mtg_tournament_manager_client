@@ -156,7 +156,19 @@ class StartTmt extends Component<StartTmtProps, StartTmtState> {
     if (this.state.tournament.getRoomCode() === "") {
       return <h2>Loading...</h2>;
     } else if(this.state.tournament.getTournamentStatus() === TournamentStatus.Complete) {
-      return <FinalResults tournament={this.state.tournament} playerList={this.state.playerList}/>;
+      return (
+        <React.Fragment>
+          <FinalResults tournament={this.state.tournament} playerList={this.state.playerList}/>
+          <Button
+            className="btn btn-danger m-2"
+            onClick={() => this.handleCancelTmt()}
+            href="/host"
+          >
+            End Tournament
+          </Button>
+        </React.Fragment>
+        
+      );
     } else if (this.state.pairings.length > 0) {
       return (
         <div className="m-2">

@@ -91,7 +91,7 @@ class HostTmt extends Component<HostTmtProps, HostTmtState> {
         })
         .then((id: string) => {
           console.log("id: ", id);
-          if (id === "") {
+          if (id === "-1") {
             alert("Room code is not unique. Please try a differnt code.");
           } else {
             this.setState({ id });

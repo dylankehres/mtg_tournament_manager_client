@@ -244,7 +244,13 @@ class PlayerWaiting extends Component<PlayerWaitingProps, PlayerWaitingState> {
         return <FinalResults tournament={this.state.tournament} playerList={this.state.playerList}/>;
       }
       else {
-        return <Pairings pairings={this.state.pairings} onGetPairings={this.getPairings} />;
+        return (
+          <React.Fragment>
+            <Pairings pairings={this.state.pairings} onGetPairings={this.getPairings} />
+            <h4>Waiting for next round to start...</h4>
+          </React.Fragment>
+        
+        );
 
       }
     } else if (this.state.currPlayer.getRoomCode() !== "") {

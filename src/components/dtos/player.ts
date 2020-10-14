@@ -6,6 +6,7 @@ interface PlayerIntf {
   format: string;
   deckName: string;
   points: number;
+  bye: boolean;
 }
 
 class Player {
@@ -16,6 +17,7 @@ class Player {
   private format: string;
   private deckName: string;
   private points: number;
+  private bye: boolean;
 
   constructor(initData?: PlayerIntf) {
     if (initData) {
@@ -26,6 +28,7 @@ class Player {
       this.format = initData.format;
       this.deckName = initData.deckName;
       this.points = initData.points;
+      this.bye = initData.bye;
     } else {
       this.id = "";
       this.tournamentID = "";
@@ -34,6 +37,7 @@ class Player {
       this.format = "";
       this.deckName = "";
       this.points = 0;
+      this.bye = false;
     }
   }
 
@@ -63,6 +67,10 @@ class Player {
 
   getPoints(): number {
     return this.points;
+  }
+
+  getBye(): boolean {
+    return this.bye;
   }
 }
 
