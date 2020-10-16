@@ -1,19 +1,13 @@
 import React, { Component } from "react";
 import { Button, Table } from "react-bootstrap";
-import { Redirect } from "react-router-dom";
 import RoundTimer from "../roundTimer";
 import LoadingDiv from "../../loadingDiv";
 import { MatchData, MatchDataIntf } from "../../dtos/matchData";
 import { Game, ResultStatus, ResultStatusMsg } from "../../dtos/game";
-import { MatchStatus } from "components/dtos/match";
 
 type RoundProps = {
   serverAddress: string;
-  match: {
-    params: {
-      playerID: string;
-    };
-  };
+  playerID: string;
 };
 
 type RoundState = {
@@ -59,7 +53,7 @@ class Round extends Component<RoundProps, RoundState> {
 
     fetch(
       `${this.props.serverAddress}/match/gameResults/${
-        this.props.match.params.playerID
+        this.props.playerID
       }/${winnerID}/${this.state.matchData.getMatch().getRoundNum()}`,
       {
         method: "POST",
@@ -149,7 +143,7 @@ class Round extends Component<RoundProps, RoundState> {
 
   getMatchData(): void {
     fetch(
-      `${this.props.serverAddress}/match/${this.props.match.params.playerID}`,
+      `${this.props.serverAddress}/match/${this.props.playerID}`,
       {
         method: "GET",
         headers: {
@@ -169,7 +163,7 @@ class Round extends Component<RoundProps, RoundState> {
         console.log("setState timeRemaining: ", this.state.timeRemaining);
 
         if (
-          this.props.match.params.playerID ===
+          this.props.playerID ===
           this.state.matchData.getPlayer1().getID()
         ) {
           this.setState({
@@ -227,11 +221,11 @@ class Round extends Component<RoundProps, RoundState> {
     if (this.state.playerID === "") {
       return <LoadingDiv />;
     }
-    if (
-      this.state.matchData.getMatch().getMatchStatus() === MatchStatus.Complete
-    ) {
-      return <Redirect to={`/player/${this.state.playerID}`} />;
-    }
+    // if (
+    //   this.state.matchData.getMatch().getMatchStatus() === MatchStatus.Complete
+    // ) {
+    //   return <Redirect to={`/player/${this.state.playerID}`} />;
+    // }
     return (
       <div className="m-2">
         <table>

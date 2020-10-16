@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { Button, Form } from "react-bootstrap";
-import { Redirect } from "react-router-dom";
 import Pairings from "../pairings";
 import PlayerList from "../playerList";
 import PlayerMatch from "./playerMatch";
+import Round from "./round";
 import FinalResults from "../finalResults";
 import { Player, PlayerIntf } from "../../dtos/player";
 import { MatchData, MatchDataIntf } from "../../dtos/matchData";
@@ -152,7 +152,9 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
         .getMatch()
         .getPlayerReadyByID(this.state.currPlayer.getID())
     ) {
-      return <Redirect to={`/round/${this.state.currPlayer.getID()}`} />;
+      // return <Redirect to={`/round/${this.state.currPlayer.getID()}`} />;
+      const roundProps = {serverAddress: this.props.serverAddress, playerID: this.props.match.params.playerID};
+      return <Round {...roundProps}/>
 
     } else if (this.state.matchData.getMatch().getMatchStatus() === MatchStatus.Complete) {
       if (this.state.tournament.getTournamentStatus() === TournamentStatus.Complete) {
