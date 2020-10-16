@@ -4,7 +4,6 @@ import { MatchData } from "../dtos/matchData";
 
 type PairingsProps = {
   pairings: MatchData[];
-  onGetPairings: Function;
 };
 
 const Pairings = (props: PairingsProps) => {

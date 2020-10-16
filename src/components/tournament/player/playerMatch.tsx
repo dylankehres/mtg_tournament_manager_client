@@ -4,8 +4,6 @@ import { MatchData } from "../../dtos/matchData";
 
 type PlayerMatchProps = {
   currPlayer: Player;
-  player1: Player;
-  player2: Player;
   matchData: MatchData;
   serverAddress: string;
 };

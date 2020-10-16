@@ -10,7 +10,7 @@ import { MatchData, MatchDataIntf } from "../../dtos/matchData";
 import { Tournament, TournamentIntf, TournamentStatus } from 'components/dtos/tournament';
 import { MatchStatus } from 'components/dtos/match';
 
-type PlayerWaitingProps = {
+type PlayerHubProps = {
   serverAddress: string;
   match: {
     params: {
@@ -19,25 +19,29 @@ type PlayerWaitingProps = {
   };
 };
 
-type PlayerWaitingState = {
+type PlayerHubState = {
   tournament: Tournament;
   playerList: Player[];
   pairings: MatchData[];
   matchData: MatchData;
   currPlayer: Player;
-  player1: Player;
-  player2: Player;
 };
 
-class PlayerWaiting extends Component<PlayerWaitingProps, PlayerWaitingState> {
+interface PlayerHubDtoIntf {
+  tournament: TournamentIntf;
+  playerList: PlayerIntf[];
+  pairings: MatchDataIntf[];
+  matchData: MatchDataIntf;
+  currPlayer: PlayerIntf;
+}
+
+class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
   state = {
     tournament: new Tournament(),
     playerList: new Array<Player>(),
     pairings: new Array<MatchData>(),
     matchData: new MatchData(),
     currPlayer: new Player(),
-    player1: new Player(),
-    player2: new Player(),
   };
 
   handleLeaveTmt() {
@@ -52,121 +56,6 @@ class PlayerWaiting extends Component<PlayerWaitingProps, PlayerWaitingState> {
       .then((res) => res.json())
       .then(() => {})
       .catch((err) => console.log("Fetch Error in handleLeaveTmt", err));
-  }
-
-  getPlayerData() {
-    console.log("Get player data");
-    return fetch(
-      `${this.props.serverAddress}/join/${this.props.match.params.playerID}`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    ).then((res) => {
-      return res.json();
-    });
-  }
-
-  getPairings() {
-    this.getPlayerData().then((initCurrPlayer: PlayerIntf) => {
-      const currPlayer = new Player(initCurrPlayer);
-      if (currPlayer.getRoomCode() === "") {
-        alert("Something went wrong. Please try that again.");
-      } else {
-        this.setState({ currPlayer });
-        this.getPlayerList();
-
-        fetch(
-          `${
-            this.props.serverAddress
-          }/pairings/${this.state.currPlayer.getRoomCode()}`,
-          {
-            method: "GET",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-          }
-        )
-          .then((res) => res.json())
-          .then((matchDataInitArr: MatchDataIntf[]) => {
-            const pairings: MatchData[] = [];
-            matchDataInitArr.forEach((matchDataInit) =>
-              pairings.push(new MatchData(matchDataInit))
-            );
-            this.setState({ pairings });
-          })
-          .catch((err) =>
-            console.log("Fetch Error in getPairings for playerWaiting.jsx", err)
-          );
-      }
-    });
-  }
-
-  getPlayerMatch() {
-    fetch(
-      `${this.props.serverAddress}/match/${this.props.match.params.playerID}`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((matchDataInit: MatchDataIntf) => {
-        this.setState({ matchData: new MatchData(matchDataInit) });
-        console.log("matchData: ", this.state.matchData);
-        this.getTournament();
-      })
-      .catch((err) => console.log("Fetch Error in getPlayerMatch", err));
-  }
-
-  getTournament() {
-    if(this.state.matchData.getMatch().getTournamentID() !== "") {
-      fetch(
-        `${this.props.serverAddress}/tournament/${this.state.matchData.getMatch().getTournamentID()}`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((tournamentInit: TournamentIntf) => {
-          this.setState({ tournament: new Tournament(tournamentInit) });
-          console.log("tournament: ", this.state.tournament);
-        })
-        .catch((err) => console.log("Fetch Error in getTournament", err));
-    }
-  }
-
-  getPlayerList(): void {
-    const playerList: Player[] = [];
-
-    fetch(`${this.props.serverAddress}/playerList/${this.state.currPlayer.getRoomCode()}`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((initPlayerfList: PlayerIntf[]) => {
-        if (initPlayerfList.length > 0) {  
-          initPlayerfList.forEach((initPlayer) =>
-            playerList.push(new Player(initPlayer))
-          );
-          console.log("player list", playerList);
-          this.setState({ playerList });
-        }
-      });
   }
 
   readyUp() {
@@ -194,9 +83,38 @@ class PlayerWaiting extends Component<PlayerWaitingProps, PlayerWaitingState> {
       );
   }
 
+  getPlayerHubData(): void {
+    fetch(`${this.props.serverAddress}/playerHub/${this.props.match.params.playerID}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((playerHubInit: PlayerHubDtoIntf) => {
+        const playerList = new Array<Player>();
+        for (let playerInit of playerHubInit.playerList) {
+          playerList.push(new Player(playerInit));
+        }
+
+        const pairings = new Array<MatchData>();
+        for (let matchInit of playerHubInit.pairings) {
+          pairings.push(new MatchData(matchInit));
+        }
+
+        this.setState({
+          tournament: new Tournament(playerHubInit.tournament),
+          playerList,
+          pairings,
+          matchData: new MatchData(playerHubInit.matchData),
+          currPlayer: new Player(playerHubInit.currPlayer)   
+      });
+    })
+  }
+
   componentDidMount() {
-    this.getPairings();
-    this.getPlayerMatch();
+    this.getPlayerHubData();
   }
 
   render() {
@@ -213,13 +131,10 @@ class PlayerWaiting extends Component<PlayerWaitingProps, PlayerWaitingState> {
           <PlayerMatch
             currPlayer={this.state.currPlayer}
             matchData={this.state.matchData}
-            player1={this.state.player1}
-            player2={this.state.player2}
             serverAddress={this.props.serverAddress}
           />
           <Pairings
             pairings={this.state.pairings}
-            onGetPairings={this.getPairings}
           />
           <Button
             className="btn btn-success m-2"
@@ -246,7 +161,7 @@ class PlayerWaiting extends Component<PlayerWaitingProps, PlayerWaitingState> {
       else {
         return (
           <React.Fragment>
-            <Pairings pairings={this.state.pairings} onGetPairings={this.getPairings} />
+            <Pairings pairings={this.state.pairings} />
             <h4>Waiting for next round to start...</h4>
           </React.Fragment>
         
@@ -277,4 +192,4 @@ class PlayerWaiting extends Component<PlayerWaitingProps, PlayerWaitingState> {
   }
 }
 
-export default PlayerWaiting;
+export default PlayerHub;

@@ -174,7 +174,6 @@ class StartTmt extends Component<StartTmtProps, StartTmtState> {
         <div className="m-2">
           <Pairings
             pairings={this.state.pairings}
-            onGetPairings={this.getPairings}
             key={"pairings_" + this.state.tournament.getRoomCode()}
           />
           <Form>
