@@ -41,6 +41,27 @@ class Game {
     }
   }
 
+  getGameIntf(): GameIntf {
+    const gameInit: GameIntf = {
+      id: this.getID(),
+      matchID: this.getMatchID(),
+      tournamentID: this.getTournamentID(),
+      gameNum: this.getGameNum(),
+      player1Wins: this.getPlayer1Wins(),
+      player2Wins: this.getPlayer2Wins(),
+      draw: this.getDraw(),
+      player1Ready: this.getPlayer1Ready(),
+      player2Ready: this.getPlayer2Ready(),
+      player1Voted: this.getPlayer1Voted(),
+      player2Voted: this.getPlayer1Voted(),
+      resultStatus: this.getResultStatus(),
+      winningPlayerID: this.getWinningPlayerID(),
+      isActive: this.getIsActive(),
+    };
+
+    return gameInit;
+  }
+
   getID(): string {
     return this.data.id;
   }

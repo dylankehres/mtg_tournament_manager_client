@@ -4,10 +4,12 @@ import RoundTimer from "../roundTimer";
 import LoadingDiv from "../../loadingDiv";
 import { MatchData, MatchDataIntf } from "../../dtos/matchData";
 import { Game, ResultStatus, ResultStatusMsg } from "../../dtos/game";
+import { MatchStatus } from "components/dtos/match";
 
 type RoundProps = {
   serverAddress: string;
   playerID: string;
+  matchData: MatchData;
 };
 
 type RoundState = {
@@ -40,14 +42,10 @@ class Round extends Component<RoundProps, RoundState> {
   }
 
   gameDraw() {
-    console.log("Game Draw");
     this.reportResults("Draw");
   }
 
   reportResults(winnerID: string) {
-    console.log("Report results");
-    console.log("Game List: ", this.state.matchData.getGameList());
-
     const currentGame = this.state.matchData.getActiveGame();
     const currentGameID = currentGame.getID();
 
@@ -85,11 +83,16 @@ class Round extends Component<RoundProps, RoundState> {
       );
   }
 
-  hasVoted(): boolean {
-    if (this.state.resultStatus === ResultStatus.ResultsFinal) {
+  disableVoting(): boolean {
+    if (
+      this.state.matchData.getMatch().getMatchStatus() ==
+      MatchStatus.AwaitingPlayers
+    ) {
       return false;
+    } else if (this.state.resultStatus === ResultStatus.ResultsFinal) {
+      return true;
     } else if (this.state.resultStatus === ResultStatus.ResultsPending) {
-      return !this.state.matchData.getPlayerHasVoted(this.state.playerID);
+      return this.state.matchData.getPlayerHasVoted(this.state.playerID);
     }
     return false;
   }
@@ -141,45 +144,75 @@ class Round extends Component<RoundProps, RoundState> {
     }
   }
 
-  getMatchData(): void {
-    fetch(
-      `${this.props.serverAddress}/match/${this.props.playerID}`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((matchDataInit: MatchDataIntf) => {
-        this.setState({ matchData: new MatchData(matchDataInit) });
-        this.setState({
-          timeRemaining:
-            this.state.matchData.getMatch().getEndTime() - Date.now(),
-        });
+  // getMatchData(): void {
+  //   fetch(
+  //     `${this.props.serverAddress}/match/${this.props.playerID}`,
+  //     {
+  //       method: "GET",
+  //       headers: {
+  //         Accept: "application/json",
+  //         "Content-Type": "application/json",
+  //       },
+  //     }
+  //   )
+  //     .then((res) => res.json())
+  //     .then((matchDataInit: MatchDataIntf) => {
+  //       this.setState({ matchData: new MatchData(matchDataInit) });
+  //       this.setState({
+  //         timeRemaining:
+  //           this.state.matchData.getMatch().getEndTime() - Date.now(),
+  //       });
 
-        console.log("setState timeRemaining: ", this.state.timeRemaining);
+  //       console.log("setState timeRemaining: ", this.state.timeRemaining);
 
-        if (
-          this.props.playerID ===
-          this.state.matchData.getPlayer1().getID()
-        ) {
-          this.setState({
-            playerID: this.state.matchData.getPlayer1().getID(),
-            opponentID: this.state.matchData.getPlayer2().getID(),
-          });
-        } else {
-          this.setState({
-            playerID: this.state.matchData.getPlayer2().getID(),
-            opponentID: this.state.matchData.getPlayer1().getID(),
-          });
-        }
-        this.setResultStatusMsg();
-        this.buildWinnersList();
-      })
-      .catch((err) => console.log("Ajax Error in round.tsx getMatchData", err));
+  //       if (
+  //         this.props.playerID ===
+  //         this.state.matchData.getPlayer1().getID()
+  //       ) {
+  //         this.setState({
+  //           playerID: this.state.matchData.getPlayer1().getID(),
+  //           opponentID: this.state.matchData.getPlayer2().getID(),
+  //         });
+  //       } else {
+  //         this.setState({
+  //           playerID: this.state.matchData.getPlayer2().getID(),
+  //           opponentID: this.state.matchData.getPlayer1().getID(),
+  //         });
+  //       }
+  //       this.setResultStatusMsg();
+  //       this.buildWinnersList();
+  //     })
+  //     .catch((err) => console.log("Ajax Error in round.tsx getMatchData", err));
+  // }
+
+  setTimeRemaining(): void {
+    this.setState({
+      timeRemaining: this.state.matchData.getMatch().getEndTime() - Date.now(),
+    });
+  }
+
+  setPlayerAndOpponent(): void {
+    if (this.props.playerID === this.state.matchData.getPlayer1().getID()) {
+      this.setState({
+        playerID: this.state.matchData.getPlayer1().getID(),
+        opponentID: this.state.matchData.getPlayer2().getID(),
+      });
+    } else {
+      this.setState({
+        playerID: this.state.matchData.getPlayer2().getID(),
+        opponentID: this.state.matchData.getPlayer1().getID(),
+      });
+    }
+  }
+
+  buildRoundData(): void {
+    // const matchData = new MatchData(this.props.matchDataInit);
+    this.setState({ matchData: this.props.matchData }, () => {
+      this.setTimeRemaining();
+      this.setPlayerAndOpponent();
+      this.setResultStatusMsg();
+      this.buildWinnersList();
+    });
   }
 
   buildWinnersList() {
@@ -214,7 +247,8 @@ class Round extends Component<RoundProps, RoundState> {
   }
 
   componentDidMount() {
-    this.getMatchData();
+    // this.getMatchData();
+    this.buildRoundData();
   }
 
   render() {
@@ -282,7 +316,7 @@ class Round extends Component<RoundProps, RoundState> {
                         <Button
                           className="btn btn-success"
                           style={{ width: "136px" }}
-                          disabled={this.hasVoted()}
+                          disabled={this.disableVoting()}
                           onClick={() => this.playerGameWin()}
                         >
                           I Won
@@ -294,7 +328,7 @@ class Round extends Component<RoundProps, RoundState> {
                         <Button
                           className="btn btn-danger"
                           style={{ width: "136px" }}
-                          disabled={this.hasVoted()}
+                          disabled={this.disableVoting()}
                           onClick={() => this.opponentGameWin()}
                         >
                           Opponent Won
@@ -306,7 +340,7 @@ class Round extends Component<RoundProps, RoundState> {
                         <Button
                           className="btn btn-primary"
                           style={{ width: "136px" }}
-                          disabled={this.hasVoted()}
+                          disabled={this.disableVoting()}
                           onClick={() => this.gameDraw()}
                         >
                           Draw

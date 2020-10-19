@@ -41,6 +41,21 @@ class Player {
     }
   }
 
+  getPlayerIntf(): PlayerIntf {
+    const playerInit: PlayerIntf = {
+      id: this.getID(),
+      tournamentID: this.getTournamentID(),
+      name: this.getName(),
+      roomCode: this.getRoomCode(),
+      format: this.getFormat(),
+      deckName: this.getDeckName(),
+      points: this.getPoints(),
+      bye: this.getBye(),
+    }
+
+    return playerInit;
+  }
+
   getID(): string {
     return this.id;
   }

@@ -7,8 +7,12 @@ import Round from "./round";
 import FinalResults from "../finalResults";
 import { Player, PlayerIntf } from "../../dtos/player";
 import { MatchData, MatchDataIntf } from "../../dtos/matchData";
-import { Tournament, TournamentIntf, TournamentStatus } from 'components/dtos/tournament';
-import { MatchStatus } from 'components/dtos/match';
+import {
+  Tournament,
+  TournamentIntf,
+  TournamentStatus,
+} from "components/dtos/tournament";
+import { MatchStatus } from "components/dtos/match";
 
 type PlayerHubProps = {
   serverAddress: string;
@@ -84,23 +88,30 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
   }
 
   getPlayerHubData(): void {
-    fetch(`${this.props.serverAddress}/playerHub/${this.props.match.params.playerID}`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `${this.props.serverAddress}/playerHub/${this.props.match.params.playerID}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => res.json())
       .then((playerHubInit: PlayerHubDtoIntf) => {
         const playerList = new Array<Player>();
-        for (let playerInit of playerHubInit.playerList) {
-          playerList.push(new Player(playerInit));
+        if (playerHubInit?.playerList?.length > 0) {
+          for (let playerInit of playerHubInit.playerList) {
+            playerList.push(new Player(playerInit));
+          }
         }
 
         const pairings = new Array<MatchData>();
-        for (let matchInit of playerHubInit.pairings) {
-          pairings.push(new MatchData(matchInit));
+        if (playerHubInit?.pairings?.length) {
+          for (let matchInit of playerHubInit.pairings) {
+            pairings.push(new MatchData(matchInit));
+          }
         }
 
         this.setState({
@@ -108,9 +119,9 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
           playerList,
           pairings,
           matchData: new MatchData(playerHubInit.matchData),
-          currPlayer: new Player(playerHubInit.currPlayer)   
+          currPlayer: new Player(playerHubInit.currPlayer),
+        });
       });
-    })
   }
 
   componentDidMount() {
@@ -118,10 +129,28 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
   }
 
   render() {
+    console.log(
+      "Tournament status: ",
+      this.state.tournament.getTournamentStatus()
+    );
+    console.log(
+      "Match status: ",
+      this.state.matchData.getMatch().getMatchStatus()
+    );
+    console.log(
+      "Player ready: ",
+      this.state.matchData
+        .getMatch()
+        .getPlayerReadyByID(this.state.currPlayer.getID())
+    );
+    console.log("Room code: ", this.state.currPlayer.getRoomCode());
+
     if (
       // Waiting for player to ready up
-      this.state.tournament.getTournamentStatus() === TournamentStatus.InProgress &&
-      this.state.matchData.getMatch().getMatchStatus() === MatchStatus.AwaitingPlayers &&
+      this.state.tournament.getTournamentStatus() ===
+        TournamentStatus.InProgress &&
+      this.state.matchData.getMatch().getMatchStatus() ===
+        MatchStatus.AwaitingPlayers &&
       !this.state.matchData
         .getMatch()
         .getPlayerReadyByID(this.state.currPlayer.getID())
@@ -133,9 +162,7 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
             matchData={this.state.matchData}
             serverAddress={this.props.serverAddress}
           />
-          <Pairings
-            pairings={this.state.pairings}
-          />
+          <Pairings pairings={this.state.pairings} />
           <Button
             className="btn btn-success m-2"
             onClick={() => this.readyUp()}
@@ -144,38 +171,50 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
           </Button>
         </React.Fragment>
       );
-
     } else if (
       // Player is ready
-      this.state.matchData.getMatch().getMatchStatus() !== MatchStatus.Complete &&
+      this.state.matchData.getMatch().getMatchStatus() !==
+        MatchStatus.Complete &&
       this.state.matchData
         .getMatch()
         .getPlayerReadyByID(this.state.currPlayer.getID())
     ) {
-      // return <Redirect to={`/round/${this.state.currPlayer.getID()}`} />;
-      const roundProps = {serverAddress: this.props.serverAddress, playerID: this.props.match.params.playerID};
-      return <Round {...roundProps}/>
-
-    } else if (this.state.matchData.getMatch().getMatchStatus() === MatchStatus.Complete) {
-      if (this.state.tournament.getTournamentStatus() === TournamentStatus.Complete) {
-        return <FinalResults tournament={this.state.tournament} playerList={this.state.playerList}/>;
-      }
-      else {
+      return (
+        <Round
+          serverAddress={this.props.serverAddress}
+          playerID={this.props.match.params.playerID}
+          matchData={this.state.matchData}
+          key={`round_${this.state.matchData.getMatch().getRoundNum()}`}
+        />
+      );
+    } else if (
+      this.state.matchData.getMatch().getMatchStatus() === MatchStatus.Complete
+    ) {
+      if (
+        this.state.tournament.getTournamentStatus() ===
+        TournamentStatus.Complete
+      ) {
+        return (
+          <FinalResults
+            tournament={this.state.tournament}
+            playerList={this.state.playerList}
+          />
+        );
+      } else {
         return (
           <React.Fragment>
             <Pairings pairings={this.state.pairings} />
             <h4>Waiting for next round to start...</h4>
           </React.Fragment>
-        
         );
-
       }
     } else if (this.state.currPlayer.getRoomCode() !== "") {
       return (
         <div className="m-2">
           <PlayerList
             serverAddress={this.props.serverAddress}
-            roomCode={this.state.currPlayer.getRoomCode()}
+            playerList={this.state.playerList}
+            key={"playerList_" + this.state.tournament.getRoomCode()}
           />
           <Form>
             <Button

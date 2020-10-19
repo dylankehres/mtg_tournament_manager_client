@@ -87,6 +87,31 @@ class Match {
     }
   }
 
+  getMatchIntf(): MatchIntf {
+    const matchInit: MatchIntf = {
+      id: this.getID(),
+      tournamentID: this.getTournamentID(),
+      player1ID: this.getPlayer1ID(), 
+      player2ID: this.getPlayer2ID(),
+      player1Wins: this.getPlayer1Wins(),
+      player2Wins: this.getPlayer2Wins(),
+      draws: this.getDraws(),
+      player1Ready: this.getPlayer1Ready(),
+      player2Ready: this.getPlayer2Ready(),
+      tableNum: this.getTableNum(),
+      matchStatus: this.getMatchStatus(),
+      gameKeys: this.getGameKeys(),
+      activeGameID: this.getActiveGameID(),
+      startTime: this.getStartTime(),
+      endTime: this.getEndTime(),
+      timeLimit: this.getTimeLimit(),
+      roundNum: this.getRoundNum(),
+      numGames: this.getNumGames(),
+    };
+
+    return matchInit;
+  }
+
   getID(): string {
     return this.id;
   }

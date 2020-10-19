@@ -32,6 +32,20 @@ class MatchData {
     }
   }
 
+  getMatchDataIntf(): MatchDataIntf{
+    const gameListInit: GameIntf[] = new Array<GameIntf>();
+    this.getGameList().forEach(game => gameListInit.push(game.getGameIntf()));
+
+    const matchDataInit: MatchDataIntf = {
+      player1: this.getPlayer1().getPlayerIntf(),
+      player2: this.getPlayer2().getPlayerIntf(),
+      match: this.getMatch().getMatchIntf(),
+      gameList: gameListInit,
+    };
+
+    return matchDataInit;
+  }
+
   getPlayer1(): Player {
     return this.player1;
   }
