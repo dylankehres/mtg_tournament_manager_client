@@ -5,14 +5,11 @@ import PlayerList from "../playerList";
 import PlayerMatch from "./playerMatch";
 import Round from "./round";
 import FinalResults from "../finalResults";
-import { Player, PlayerIntf } from "../../dtos/player";
+import { Player } from "../../dtos/player";
 import { MatchData, MatchDataIntf } from "../../dtos/matchData";
-import {
-  Tournament,
-  TournamentIntf,
-  TournamentStatus,
-} from "components/dtos/tournament";
+import { Tournament, TournamentStatus } from "components/dtos/tournament";
 import { MatchStatus } from "components/dtos/match";
+import { PlayerHubDtoIntf } from "components/dtos/hubDtos";
 
 type PlayerHubProps = {
   serverAddress: string;
@@ -31,14 +28,6 @@ type PlayerHubState = {
   currPlayer: Player;
 };
 
-interface PlayerHubDtoIntf {
-  tournament: TournamentIntf;
-  playerList: PlayerIntf[];
-  pairings: MatchDataIntf[];
-  matchData: MatchDataIntf;
-  currPlayer: PlayerIntf;
-}
-
 class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
   state = {
     tournament: new Tournament(),
@@ -47,6 +36,14 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
     matchData: new MatchData(),
     currPlayer: new Player(),
   };
+
+  constructor(props: PlayerHubProps) {
+    super(props);
+
+    this.buildStateFromPlayerHubDto = this.buildStateFromPlayerHubDto.bind(
+      this
+    );
+  }
 
   handleLeaveTmt() {
     fetch(`${this.props.serverAddress}/join`, {
@@ -87,6 +84,52 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
       );
   }
 
+  // reportResults(winnerID: string) {
+  //   fetch(
+  //     `${this.props.serverAddress}/match/gameResults/${
+  //       this.props.match.params.playerID
+  //     }/${winnerID}/${this.state.matchData.getMatch().getRoundNum()}`,
+  //     {
+  //       method: "POST",
+  //       headers: {
+  //         Accept: "application/json",
+  //         "Content-Type": "application/json",
+  //       },
+  //     }
+  //   )
+  //     .then((res) => res.json())
+  //     .then((playerHubDataInit: PlayerHubDtoIntf) => {
+  //       this.buildStateFromPlayerHubDto(playerHubDataInit);
+  //     })
+  //     .catch((err) =>
+  //       console.log("Ajax Error in round.tsx reportResults", err)
+  //     );
+  // }
+
+  buildStateFromPlayerHubDto(playerHubInit: PlayerHubDtoIntf): void {
+    const playerList = new Array<Player>();
+    if (playerHubInit?.playerList?.length > 0) {
+      for (let playerInit of playerHubInit.playerList) {
+        playerList.push(new Player(playerInit));
+      }
+    }
+
+    const pairings = new Array<MatchData>();
+    if (playerHubInit?.pairings?.length) {
+      for (let matchInit of playerHubInit.pairings) {
+        pairings.push(new MatchData(matchInit));
+      }
+    }
+
+    this.setState({
+      tournament: new Tournament(playerHubInit.tournament),
+      playerList,
+      pairings,
+      matchData: new MatchData(playerHubInit.matchData),
+      currPlayer: new Player(playerHubInit.currPlayer),
+    });
+  }
+
   getPlayerHubData(): void {
     fetch(
       `${this.props.serverAddress}/playerHub/${this.props.match.params.playerID}`,
@@ -100,27 +143,7 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
     )
       .then((res) => res.json())
       .then((playerHubInit: PlayerHubDtoIntf) => {
-        const playerList = new Array<Player>();
-        if (playerHubInit?.playerList?.length > 0) {
-          for (let playerInit of playerHubInit.playerList) {
-            playerList.push(new Player(playerInit));
-          }
-        }
-
-        const pairings = new Array<MatchData>();
-        if (playerHubInit?.pairings?.length) {
-          for (let matchInit of playerHubInit.pairings) {
-            pairings.push(new MatchData(matchInit));
-          }
-        }
-
-        this.setState({
-          tournament: new Tournament(playerHubInit.tournament),
-          playerList,
-          pairings,
-          matchData: new MatchData(playerHubInit.matchData),
-          currPlayer: new Player(playerHubInit.currPlayer),
-        });
+        this.buildStateFromPlayerHubDto(playerHubInit);
       });
   }
 
@@ -179,13 +202,22 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
         .getMatch()
         .getPlayerReadyByID(this.state.currPlayer.getID())
     ) {
+      const roundProps = {
+        serverAddress: this.props.serverAddress,
+        playerID: this.props.match.params.playerID,
+        matchData: this.state.matchData,
+        updatePlayerHub: this.buildStateFromPlayerHubDto,
+        key: `round_${this.state.matchData.getMatch().getRoundNum()}`,
+      };
       return (
-        <Round
-          serverAddress={this.props.serverAddress}
-          playerID={this.props.match.params.playerID}
-          matchData={this.state.matchData}
-          key={`round_${this.state.matchData.getMatch().getRoundNum()}`}
-        />
+        <Round {...roundProps} />
+        // <Round
+        //   serverAddress={this.props.serverAddress}
+        //   playerID={this.props.match.params.playerID}
+        //   matchData={this.state.matchData}
+        //   updatePlayerHub={this.buildStateFromPlayerHubDto}
+        //   key={`round_${this.state.matchData.getMatch().getRoundNum()}`}
+        // />
       );
     } else if (
       this.state.matchData.getMatch().getMatchStatus() === MatchStatus.Complete

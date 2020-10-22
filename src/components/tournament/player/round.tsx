@@ -2,14 +2,16 @@ import React, { Component } from "react";
 import { Button, Table } from "react-bootstrap";
 import RoundTimer from "../roundTimer";
 import LoadingDiv from "../../loadingDiv";
-import { MatchData, MatchDataIntf } from "../../dtos/matchData";
+import { MatchData } from "../../dtos/matchData";
 import { Game, ResultStatus, ResultStatusMsg } from "../../dtos/game";
 import { MatchStatus } from "components/dtos/match";
+import { PlayerHubDtoIntf } from "components/dtos/hubDtos";
 
 type RoundProps = {
   serverAddress: string;
   playerID: string;
   matchData: MatchData;
+  updatePlayerHub: Function;
 };
 
 type RoundState = {
@@ -62,8 +64,9 @@ class Round extends Component<RoundProps, RoundState> {
       }
     )
       .then((res) => res.json())
-      .then((matchDataInit: MatchDataIntf) => {
-        this.setState({ matchData: new MatchData(matchDataInit) });
+      .then((playerHubInit: PlayerHubDtoIntf) => {
+        this.props.updatePlayerHub(playerHubInit);
+        this.setState({ matchData: new MatchData(playerHubInit.matchData) });
         this.buildWinnersList();
 
         const activeGame = this.state.matchData.getGameByID(currentGameID);
@@ -85,10 +88,10 @@ class Round extends Component<RoundProps, RoundState> {
 
   disableVoting(): boolean {
     if (
-      this.state.matchData.getMatch().getMatchStatus() ==
+      this.state.matchData.getMatch().getMatchStatus() ===
       MatchStatus.AwaitingPlayers
     ) {
-      return false;
+      return true;
     } else if (this.state.resultStatus === ResultStatus.ResultsFinal) {
       return true;
     } else if (this.state.resultStatus === ResultStatus.ResultsPending) {

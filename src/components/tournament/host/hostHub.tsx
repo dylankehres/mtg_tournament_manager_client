@@ -4,13 +4,10 @@ import PlayerList from "../playerList";
 import Pairings from "../pairings";
 import FinalResults from "../finalResults";
 import { MatchData, MatchDataIntf } from "../../dtos/matchData";
-import {
-  Tournament,
-  TournamentIntf,
-  TournamentStatus,
-} from "../../dtos/tournament";
+import { Tournament, TournamentStatus } from "../../dtos/tournament";
 import { MatchStatus } from "components/dtos/match";
-import { Player, PlayerIntf } from "../../dtos/player";
+import { Player } from "../../dtos/player";
+import { HostHubDtoIntf } from "components/dtos/hubDtos";
 
 type HostHubProps = {
   serverAddress: string;
@@ -26,12 +23,6 @@ type HostHubState = {
   pairings: MatchData[];
   playerList: Player[];
 };
-
-interface HostHubDtoIntf {
-  tournament: TournamentIntf;
-  playerList: PlayerIntf[];
-  pairings: MatchDataIntf[];
-}
 
 class HostHub extends Component<HostHubProps, HostHubState> {
   state = {
