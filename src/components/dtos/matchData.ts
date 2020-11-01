@@ -64,7 +64,7 @@ class MatchData {
 
   getActiveGame() {
     const activeGame = this.getGameList().find(
-      (game) => game.getIsActive(),
+      (game) => game.getActive(),
       new Game()
     );
 

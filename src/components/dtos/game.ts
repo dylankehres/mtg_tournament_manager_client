@@ -12,7 +12,7 @@ interface GameIntf {
   player2Voted: boolean;
   resultStatus: number;
   winningPlayerID: string;
-  isActive: boolean;
+  active: boolean;
 }
 
 class Game {
@@ -36,7 +36,7 @@ class Game {
         player2Voted: false,
         resultStatus: 0,
         winningPlayerID: "-1",
-        isActive: false,
+        active: false,
       };
     }
   }
@@ -56,7 +56,7 @@ class Game {
       player2Voted: this.getPlayer1Voted(),
       resultStatus: this.getResultStatus(),
       winningPlayerID: this.getWinningPlayerID(),
-      isActive: this.getIsActive(),
+      active: this.getActive(),
     };
 
     return gameInit;
@@ -114,8 +114,8 @@ class Game {
     return this.data.winningPlayerID;
   }
 
-  getIsActive(): boolean {
-    return this.data.isActive;
+  getActive(): boolean {
+    return this.data.active;
   }
 }
 
