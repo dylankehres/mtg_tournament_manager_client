@@ -84,28 +84,6 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
       );
   }
 
-  // reportResults(winnerID: string) {
-  //   fetch(
-  //     `${this.props.serverAddress}/match/gameResults/${
-  //       this.props.match.params.playerID
-  //     }/${winnerID}/${this.state.matchData.getMatch().getRoundNum()}`,
-  //     {
-  //       method: "POST",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json",
-  //       },
-  //     }
-  //   )
-  //     .then((res) => res.json())
-  //     .then((playerHubDataInit: PlayerHubDtoIntf) => {
-  //       this.buildStateFromPlayerHubDto(playerHubDataInit);
-  //     })
-  //     .catch((err) =>
-  //       console.log("Ajax Error in round.tsx reportResults", err)
-  //     );
-  // }
-
   buildStateFromPlayerHubDto(playerHubInit: PlayerHubDtoIntf): void {
     const playerList = new Array<Player>();
     if (playerHubInit?.playerList?.length > 0) {
@@ -208,17 +186,9 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
         matchData: this.state.matchData,
         updatePlayerHub: this.buildStateFromPlayerHubDto,
         key: `round_${this.state.matchData.getMatch().getRoundNum()}`,
+        match: this.props.match,
       };
-      return (
-        <Round {...roundProps} />
-        // <Round
-        //   serverAddress={this.props.serverAddress}
-        //   playerID={this.props.match.params.playerID}
-        //   matchData={this.state.matchData}
-        //   updatePlayerHub={this.buildStateFromPlayerHubDto}
-        //   key={`round_${this.state.matchData.getMatch().getRoundNum()}`}
-        // />
-      );
+      return <Round {...roundProps} />;
     } else if (
       this.state.matchData.getMatch().getMatchStatus() === MatchStatus.Complete
     ) {

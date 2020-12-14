@@ -3,8 +3,8 @@ interface PlayerIntf {
   tournamentID: string;
   name: string;
   roomCode: string;
-  format: string;
   deckName: string;
+  deckList: string;
   points: number;
   bye: boolean;
 }
@@ -14,8 +14,8 @@ class Player {
   private tournamentID: string;
   private name: string;
   private roomCode: string;
-  private format: string;
   private deckName: string;
+  private deckList: string;
   private points: number;
   private bye: boolean;
 
@@ -25,8 +25,8 @@ class Player {
       this.tournamentID = initData.tournamentID;
       this.name = initData.name;
       this.roomCode = initData.roomCode;
-      this.format = initData.format;
       this.deckName = initData.deckName;
+      this.deckList = initData.deckList;
       this.points = initData.points;
       this.bye = initData.bye;
     } else {
@@ -34,8 +34,8 @@ class Player {
       this.tournamentID = "";
       this.name = "";
       this.roomCode = "";
-      this.format = "";
       this.deckName = "";
+      this.deckList = "";
       this.points = 0;
       this.bye = false;
     }
@@ -47,8 +47,8 @@ class Player {
       tournamentID: this.getTournamentID(),
       name: this.getName(),
       roomCode: this.getRoomCode(),
-      format: this.getFormat(),
       deckName: this.getDeckName(),
+      deckList: this.getDeckList(),
       points: this.getPoints(),
       bye: this.getBye(),
     }
@@ -72,12 +72,12 @@ class Player {
     return this.roomCode;
   }
 
-  getFormat(): string {
-    return this.format;
-  }
-
   getDeckName(): string {
     return this.deckName;
+  }
+
+  getDeckList(): string {
+    return this.deckList;
   }
 
   getPoints(): number {
