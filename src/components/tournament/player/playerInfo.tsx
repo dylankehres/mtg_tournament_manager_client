@@ -1,5 +1,4 @@
 import React from "react";
-import { Table } from "react-bootstrap";
 import { Player } from "../../dtos/player";
 import { Tournament } from "../../dtos/tournament";
 

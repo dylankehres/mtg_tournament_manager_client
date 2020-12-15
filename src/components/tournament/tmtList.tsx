@@ -1,9 +1,11 @@
 import React, { Component } from "react";
-import Table from "react-bootstrap/Table";
+import { Button, Table } from "react-bootstrap";
 import { Tournament, TournamentIntf } from "../dtos/tournament";
 
 type TmtListProps = {
   serverAddress: string;
+  tmtBtnClick: Function;
+  tmtBtnName: string;
 };
 
 type TmtListState = {
@@ -44,6 +46,7 @@ class TmtList extends Component<TmtListProps, TmtListState> {
                 <th>Tournament Name</th>
                 <th>Format</th>
                 <th>Room Code</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -52,6 +55,15 @@ class TmtList extends Component<TmtListProps, TmtListState> {
                   <td>{tmt.getName()}</td>
                   <td>{tmt.getFormat()}</td>
                   <td>{tmt.getRoomCode()}</td>
+                  <td>
+                    <Button
+                      className="btn btn-primary"
+                      size="sm"
+                      onClick={() => this.props.tmtBtnClick(tmt)}
+                    >
+                      {this.props.tmtBtnName}
+                    </Button>
+                  </td>
                 </tr>
               ))}
             </tbody>
