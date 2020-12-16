@@ -1,9 +1,10 @@
 import { Tournament, TournamentIntf } from "components/dtos/tournament";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Button, Table } from "react-bootstrap";
 import { Redirect, useParams } from "react-router-dom";
 import TmtList from "../tmtList";
 import TournamentInfo from "../tournamentInfo";
+import "../../styles/player.css";
 
 type JoinTmtProps = {
   serverAddress: string;
@@ -114,25 +115,28 @@ const JoinTmt: React.FunctionComponent<JoinTmtProps> = (props) => {
     }
   };
 
+  useEffect(() => {
+    if (
+      routerParams.roomCode &&
+      routerParams.roomCode !== "" &&
+      roomCode !== routerParams.roomCode
+    ) {
+      setRoomCode(routerParams.roomCode);
+      handleFindTmt(routerParams.roomCode);
+    }
+  });
+
   if (id === "") {
     if (tournament.getID() === "") {
-      if (
-        routerParams.roomCode &&
-        routerParams.roomCode !== "" &&
-        roomCode !== routerParams.roomCode
-      ) {
-        setRoomCode(routerParams.roomCode);
-        handleFindTmt(routerParams.roomCode);
-      }
-
       return (
         <React.Fragment>
           <Form>
             <Form.Group className="m-2" style={{ width: "300px" }}>
-              <Form.Label>Room Code</Form.Label>
+              <Form.Label className="joinForm">Room Code</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Room code"
+                className="joinForm"
                 value={roomCode}
                 onChange={handleRoomChange}
               ></Form.Control>
@@ -164,10 +168,11 @@ const JoinTmt: React.FunctionComponent<JoinTmtProps> = (props) => {
                 <td>
                   <Form>
                     <Form.Group className="m-2" style={{ width: "300px" }}>
-                      <Form.Label>Player Name</Form.Label>
+                      <Form.Label className="joinForm">Player Name</Form.Label>
                       <Form.Control
                         type="text"
                         placeholder="Player name"
+                        className="joinForm"
                         value={name}
                         onChange={handleNameChange}
                       ></Form.Control>
@@ -178,17 +183,19 @@ const JoinTmt: React.FunctionComponent<JoinTmtProps> = (props) => {
                         value={roomCode}
                         onChange={handleRoomChange}
                       ></Form.Control> */}
-                      <Form.Label>Deck Name</Form.Label>
+                      <Form.Label className="joinForm">Deck Name</Form.Label>
                       <Form.Control
                         type="text"
                         placeholder="Deck name"
+                        className="joinForm"
                         value={deckName}
                         onChange={handleDeckNameChange}
                       ></Form.Control>
-                      <Form.Label>Deck List</Form.Label>
+                      <Form.Label className="joinForm">Deck List</Form.Label>
                       <Form.Control
                         as="textarea"
                         rows={15}
+                        className="joinForm"
                         placeholder={
                           "4 Devoted Druid \n4 Vizier of Remedies \n1 Walking Ballista"
                         }
@@ -210,7 +217,10 @@ const JoinTmt: React.FunctionComponent<JoinTmtProps> = (props) => {
                 </td> */}
               </tr>
               <tr>
-                <TournamentInfo tournament={tournament} />
+                <TournamentInfo
+                  tournament={tournament}
+                  serverAddress={props.serverAddress}
+                />
               </tr>
             </tbody>
           </Table>

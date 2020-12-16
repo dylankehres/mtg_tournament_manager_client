@@ -1,49 +1,50 @@
 import React from "react";
 import { Table } from "react-bootstrap";
 import { Player } from "../dtos/player";
+import "../styles/player.css";
 
 export interface PlayerListProps {
   serverAddress: string;
   playerList: Player[];
 }
- 
+
 const PlayerList: React.SFC<PlayerListProps> = (props) => {
-      if (props.playerList.length > 0) {
-        return (
-          <div className="m-2" style={{ width: "300px" }}>
-            <Table striped bordered hover size="sm">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Player Name</th>
-                  <th>Deck Name</th>
-                </tr>
-              </thead>
-              <tbody>
-                {props.playerList.map((player: Player, index) => (
-                  <tr key={player.getID()}>
-                    <td>{index + 1}</td>
-                    <td>
-                      {player.getName() + " (" + player.getPoints() + " pts)"}
-                    </td>
-                    <td>{player.getDeckName()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </div>
-        );
-      } else {
-        return (
-          <div className="m-2" style={{ width: "300px" }}>
-            <div className="m-2">
-              <h4>This event is empty</h4>
-            </div>
-          </div>
-        );
-      }
-}
- 
+  if (props.playerList.length > 0) {
+    return (
+      <div className="m-2" style={{ width: "300px" }}>
+        <Table hover size="sm">
+          <thead className="playerList">
+            <tr>
+              <th>#</th>
+              <th>Player Name</th>
+              <th>Deck Name</th>
+            </tr>
+          </thead>
+          <tbody className="playerList">
+            {props.playerList.map((player: Player, index) => (
+              <tr key={player.getID()}>
+                <td>{index + 1}</td>
+                <td>
+                  {player.getName() + " (" + player.getPoints() + " pts)"}
+                </td>
+                <td>{player.getDeckName()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+    );
+  } else {
+    return (
+      <div className="m-2" style={{ width: "300px" }}>
+        <div className="m-2 playerList">
+          <h4>This event is empty</h4>
+        </div>
+      </div>
+    );
+  }
+};
+
 export default PlayerList;
 
 // type PlayerListProps = {

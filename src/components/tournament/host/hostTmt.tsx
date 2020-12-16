@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Form, Dropdown, Button } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
 import { Formats } from "../../dtos/tournament";
+import "../../styles/tournament.css";
 
 type HostTmtProps = {
   serverAddress: string;
@@ -106,7 +107,7 @@ class HostTmt extends Component<HostTmtProps, HostTmtState> {
       return (
         <Form>
           <Form.Group className="m-2" style={{ width: "300px" }}>
-            <Form.Label>Tournament Name</Form.Label>
+            <Form.Label className="hostForm">Tournament Name</Form.Label>
             <Form.Control
               type="text"
               placeholder="Enter name"
@@ -115,7 +116,7 @@ class HostTmt extends Component<HostTmtProps, HostTmtState> {
             ></Form.Control>
           </Form.Group>
           <Form.Group className="m-2" style={{ width: "300px" }}>
-            <Form.Label>Room Code</Form.Label>
+            <Form.Label className="hostForm">Room Code</Form.Label>
             <Form.Control
               type="text"
               placeholder="Room Code"
@@ -123,9 +124,8 @@ class HostTmt extends Component<HostTmtProps, HostTmtState> {
               onChange={this.handleRoomChange}
             ></Form.Control>
           </Form.Group>
-
           <Form.Group className="m-2" style={{ width: "300px" }}>
-            <Form.Label>Number of rounds</Form.Label>
+            <Form.Label className="hostForm">Number of rounds</Form.Label>
             <Form.Control
               type="text"
               placeholder="Enter number of rounds"
@@ -134,7 +134,7 @@ class HostTmt extends Component<HostTmtProps, HostTmtState> {
             ></Form.Control>
           </Form.Group>
           <Form.Group className="m-2" style={{ width: "300px" }}>
-            <Form.Label>Games per round</Form.Label>
+            <Form.Label className="hostForm">Games per round</Form.Label>
             <Form.Control
               type="text"
               placeholder="Enter number of games"
