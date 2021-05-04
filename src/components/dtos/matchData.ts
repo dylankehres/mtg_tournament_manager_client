@@ -88,6 +88,10 @@ class MatchData {
     return game;
   }
 
+  /**
+   * Returns the player with the given ID
+   * @param id Player ID
+   */
   getPlayerByID(id: string): Player {
     if (this.getPlayer1().getID() === id) {
       return this.getPlayer1();
@@ -98,6 +102,24 @@ class MatchData {
     return new Player();
   }
 
+  /**
+   * Returns the oppoenent of the player with the given ID
+   * @param id 
+   */
+  getOpponentByPlayerID(id: string): Player {
+    if (this.getPlayer1().getID() === id) {
+      return this.getPlayer2();
+    } else if (this.getPlayer2().getID() === id) {
+      return this.getPlayer1();
+    }
+
+    return new Player();
+  }
+
+  /**
+   * Returns true if the player with the given ID has voted in the active game
+   * @param playerID 
+   */
   getPlayerHasVoted(playerID: string): boolean {
     if (this.getMatch().getPlayer1ID() === playerID) {
       return this.getActiveGame().getPlayer1Voted();
