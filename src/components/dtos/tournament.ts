@@ -57,6 +57,22 @@ class Tournament {
     }
   }
 
+  getTournamentIntf(): TournamentIntf{
+    const tournamentInit: TournamentIntf = {
+      id: this.getID(),
+      name: this.getName(),
+      roomCode: this.getRoomCode(),
+      format: this.getFormat(),
+      numRounds: this.getNumRounds(),
+      numGames: this.getNumGames(),
+      currRound: this.getCurrRound(),
+      tournamentStatus: this.getTournamentStatus(),
+      active: this.getActive()
+    };
+
+    return tournamentInit;
+  }
+
   getID(): string {
     return this.id;
   }

@@ -1,6 +1,7 @@
 import React from "react";
 import { Table } from "react-bootstrap";
 import { Player } from "../dtos/player";
+import { PlayerInfoModal } from "../tournament/player/playerInfo";
 import "../styles/player.css";
 
 export interface PlayerListProps {
@@ -9,30 +10,37 @@ export interface PlayerListProps {
 }
 
 const PlayerList: React.SFC<PlayerListProps> = (props) => {
+  const playerInfoModal = PlayerInfoModal({
+    serverAddress: props.serverAddress,
+  });
+
   if (props.playerList.length > 0) {
     return (
-      <div className="m-2" style={{ width: "300px" }}>
-        <Table hover size="sm">
-          <thead className="playerList">
-            <tr>
-              <th>#</th>
-              <th>Player Name</th>
-              <th>Deck Name</th>
-            </tr>
-          </thead>
-          <tbody className="playerList">
-            {props.playerList.map((player: Player, index) => (
-              <tr key={player.getID()}>
-                <td>{index + 1}</td>
-                <td>
-                  {player.getName() + " (" + player.getPoints() + " pts)"}
-                </td>
-                <td>{player.getDeckName()}</td>
+      <React.Fragment>
+        <div className="m-2" style={{ width: "300px" }}>
+          <Table hover size="sm">
+            <thead className="playerList">
+              <tr>
+                <th>#</th>
+                <th>Player Name</th>
+                <th>Deck Name</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
-      </div>
+            </thead>
+            <tbody className="playerList">
+              {props.playerList.map((player: Player, index) => (
+                <tr key={player.getID()}>
+                  <td>{index + 1}</td>
+                  <td /*onClick={playerInfoModal?.handleShow}*/>
+                    {player.getName() + " (" + player.getPoints() + " pts)"}
+                  </td>
+                  <td>{player.getDeckName()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
+        {playerInfoModal}
+      </React.Fragment>
     );
   } else {
     return (
