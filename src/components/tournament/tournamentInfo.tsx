@@ -32,14 +32,15 @@ const TournamentInfo: React.FunctionComponent<TournamentInfoProps> = (
         const playerList = new Array<Player>();
         for (let playerInit of playerListInit) {
           playerList.push(new Player(playerInit));
-          setPlayerList(playerList);
         }
+        setPlayerList(playerList);
       });
   };
 
   useEffect(() => {
+    console.log("getPlayerList()");
     getPlayerList();
-  });
+  }, []);
 
   return (
     <div className="m-2 tournamentInfo">

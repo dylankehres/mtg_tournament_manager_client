@@ -1,9 +1,11 @@
 import React from "react";
 import { Table } from "react-bootstrap";
 import { MatchData } from "../dtos/matchData";
+import { PlayerInfoModal } from "./player/playerInfo";
 
 type PairingsProps = {
   pairings: MatchData[];
+  serverAddress: string;
 };
 
 const Pairings = (props: PairingsProps) => {
@@ -25,16 +27,18 @@ const Pairings = (props: PairingsProps) => {
               <tr key={matchData.getMatch().getID()}>
                 <td>{matchData.getMatch().getTableNum()}</td>
                 <td>
-                  {matchData.getPlayer1().getName() +
-                    " (" +
-                    matchData.getPlayer1().getPoints() +
-                    " pts)"}
+                  <PlayerInfoModal
+                    player={matchData.getPlayer1()}
+                    serverAddress={props.serverAddress}
+                    key={`playerInfoModal_${matchData.getPlayer1().getID()}`}
+                  />
                 </td>
                 <td>
-                  {matchData.getPlayer2().getName() +
-                    " (" +
-                    matchData.getPlayer2().getPoints() +
-                    " pts)"}
+                  <PlayerInfoModal
+                    player={matchData.getPlayer2()}
+                    serverAddress={props.serverAddress}
+                    key={`playerInfoModal_${matchData.getPlayer2().getID()}`}
+                  />
                 </td>
                 <td>
                   {matchData.getMatch().getPlayer1Wins() +

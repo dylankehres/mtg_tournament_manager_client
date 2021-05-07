@@ -124,7 +124,7 @@ const JoinTmt: React.FunctionComponent<JoinTmtProps> = (props) => {
       setRoomCode(routerParams.roomCode);
       handleFindTmt(routerParams.roomCode);
     }
-  });
+  }, []);
 
   if (id === "") {
     if (tournament.getID() === "") {

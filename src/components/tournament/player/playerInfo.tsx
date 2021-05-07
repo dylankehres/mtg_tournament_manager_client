@@ -1,51 +1,59 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PlayerInfo, PlayerInfoIntf } from "../../dtos/playerInfo";
 import { MatchData } from "../../dtos/matchData";
 import { Match } from "../../dtos/match";
 import { Button, Modal } from "react-bootstrap";
-import "../styles/player.css";
+// import "../styles/player.css";
+import { Player } from "components/dtos/player";
+import LoadingDiv from "components/loadingDiv";
 
 export interface PlayerInfoModalProps {
+  player: Player;
   serverAddress: string;
 }
 
 const PlayerInfoModal: React.FunctionComponent<PlayerInfoModalProps> = (
   props
 ) => {
-  const [playerID, setPlayerID] = useState("");
-  const [show, setShow] = useState(false);
+  const [show, setShow]: [boolean, Function] = useState(false);
 
   const handleClose = () => setShow(false);
 
-  function handleShow(playerID: string) {
-    setPlayerID(playerID);
+  function handleShow() {
     setShow(true);
   }
 
   return (
-    <Modal show={show} onHide={handleClose}>
-      <Modal.Header>
-        <Modal.Title>Player Info</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        {PlayerInfoComponent({
-          playerID: playerID,
-          serverAddress: props.serverAddress,
-        })}
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
-        </Button>
-      </Modal.Footer>
-    </Modal>
+    <React.Fragment>
+      <div>
+        <a href="#" onClick={handleShow}>
+          {props.player.getName()}
+        </a>
+        <span>{" (" + props.player.getPoints() + " pts)"}</span>
+      </div>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header>
+          <Modal.Title>Player Info</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <PlayerInfoComponent
+            playerID={props.player.getID()}
+            serverAddress={props.serverAddress}
+            key={`playerInfo_${props.player.getID()}`}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </React.Fragment>
   );
 };
 
 export interface PlayerInfoProps {
-  // player: Player;
-  // matches: MatchData[];
-  // tournament: Tournament;
   playerID: String;
   serverAddress: String;
 }
@@ -53,47 +61,59 @@ export interface PlayerInfoProps {
 const PlayerInfoComponent: React.FunctionComponent<PlayerInfoProps> = (
   props
 ) => {
-  let playerInfo: PlayerInfo = new PlayerInfo();
-  fetch(`${props.serverAddress}/playerInfo/${props.playerID}`, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  })
-    .then((res) => res.json())
-    .then((playerInfoInit: PlayerInfoIntf) => {
-      playerInfo = new PlayerInfo(playerInfoInit);
-    })
-    .catch((err) =>
-      console.log("Fetch Error in getPlayerInfo for playerInfo.jsx", err)
-    );
-
-  return (
-    <React.Fragment>
-      <span>
-        {playerInfo.getPlayer().getName()} ({playerInfo.getPlayer().getPoints()}{" "}
-        points)
-      </span>
-      <span>Tournament: {playerInfo.getTournament().getName()}</span>
-      <span>Format: {playerInfo.getTournament().getFormat()}</span>
-      <span>Deck: {playerInfo.getPlayer().getDeckName()}</span>
-      <span>Opponents:</span>
-      {playerInfo.getMatchDataList().map((matchData: MatchData) => {
-        <div>
-          <span>
-            {matchData.getOpponentByPlayerID(playerInfo.getPlayer().getID())}
-          </span>
-          <span>
-            {MatchRecord({
-              playerID: playerInfo.getPlayer().getID(),
-              match: matchData.getMatch(),
-            })}
-          </span>
-        </div>;
-      })}
-    </React.Fragment>
+  const [playerInfo, setPlayerInfo]: [PlayerInfo, Function] = useState(
+    new PlayerInfo()
   );
+
+  const getPlayerInfo = (): void => {
+    fetch(`${props.serverAddress}/playerInfo/${props.playerID}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((playerInfoInit: PlayerInfoIntf) => {
+        console.log("setPlayerInfo(new PlayerInfo(playerInfoInit))");
+        setPlayerInfo(new PlayerInfo(playerInfoInit));
+      })
+      .catch((err) =>
+        console.log("Fetch Error in getPlayerInfo for playerInfo.jsx", err)
+      );
+  };
+
+  useEffect(() => {
+    console.log("getPlayerInfo()");
+    getPlayerInfo();
+  }, []);
+
+  if (playerInfo.getPlayer().getID() !== "") {
+    return (
+      <React.Fragment>
+        <div>
+          {playerInfo.getPlayer().getName()} (
+          {playerInfo.getPlayer().getPoints()} points)
+        </div>
+        <div>Tournament: {playerInfo.getTournament().getName()}</div>
+        <div>Format: {playerInfo.getTournament().getFormat()}</div>
+        <div>Deck Name: {playerInfo.getPlayer().getDeckName()}</div>
+        <div>Deck List: {playerInfo.getPlayer().getDeckList()}</div>
+        <div>Opponents: </div>
+        {playerInfo.getMatchDataList().map((matchData: MatchData) => (
+          <div>
+            {matchData.getOpponentByPlayerID(playerInfo.getPlayer().getID())}
+            <MatchRecord
+              playerID={playerInfo.getPlayer().getID()}
+              match={matchData.getMatch()}
+            />
+          </div>
+        ))}
+      </React.Fragment>
+    );
+  } else {
+    return <LoadingDiv />;
+  }
 };
 
 export interface MatchRecordProps {
@@ -138,4 +158,4 @@ const MatchRecord: React.FunctionComponent<MatchRecordProps> = (props) => {
   );
 };
 
-export { PlayerInfo, PlayerInfoModal };
+export { PlayerInfoModal };

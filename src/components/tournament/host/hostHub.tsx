@@ -229,6 +229,7 @@ class HostHub extends Component<HostHubProps, HostHubState> {
         <div className="m-2">
           <Pairings
             pairings={this.state.pairings}
+            serverAddress={this.props.serverAddress}
             key={"pairings_" + this.state.tournament.getRoomCode()}
           />
           <Form>

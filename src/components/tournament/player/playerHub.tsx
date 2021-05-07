@@ -163,7 +163,10 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
             matchData={this.state.matchData}
             serverAddress={this.props.serverAddress}
           />
-          <Pairings pairings={this.state.pairings} />
+          <Pairings
+            pairings={this.state.pairings}
+            serverAddress={this.props.serverAddress}
+          />
           <Button
             className="btn btn-success m-2"
             onClick={() => this.readyUp()}
@@ -205,7 +208,10 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
       } else {
         return (
           <React.Fragment>
-            <Pairings pairings={this.state.pairings} />
+            <Pairings
+              pairings={this.state.pairings}
+              serverAddress={this.props.serverAddress}
+            />
             <h4>Waiting for next round to start...</h4>
           </React.Fragment>
         );

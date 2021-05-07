@@ -10,10 +10,6 @@ export interface PlayerListProps {
 }
 
 const PlayerList: React.SFC<PlayerListProps> = (props) => {
-  const playerInfoModal = PlayerInfoModal({
-    serverAddress: props.serverAddress,
-  });
-
   if (props.playerList.length > 0) {
     return (
       <React.Fragment>
@@ -30,8 +26,12 @@ const PlayerList: React.SFC<PlayerListProps> = (props) => {
               {props.playerList.map((player: Player, index) => (
                 <tr key={player.getID()}>
                   <td>{index + 1}</td>
-                  <td /*onClick={playerInfoModal?.handleShow}*/>
-                    {player.getName() + " (" + player.getPoints() + " pts)"}
+                  <td>
+                    <PlayerInfoModal
+                      player={player}
+                      serverAddress={props.serverAddress}
+                      key={`playerInfoModal_${player.getID()}`}
+                    />
                   </td>
                   <td>{player.getDeckName()}</td>
                 </tr>
@@ -39,7 +39,6 @@ const PlayerList: React.SFC<PlayerListProps> = (props) => {
             </tbody>
           </Table>
         </div>
-        {playerInfoModal}
       </React.Fragment>
     );
   } else {

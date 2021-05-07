@@ -1,7 +1,7 @@
 import React from "react";
 
-const LoadingLiv = () => {
+const LoadingDiv = () => {
   return <h2>Loading...</h2>;
 };
 
-export default LoadingLiv;
+export default LoadingDiv;
