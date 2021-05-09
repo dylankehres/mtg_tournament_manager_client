@@ -82,7 +82,6 @@ class Round extends Component<RoundProps, RoundState> {
         } else {
           if (activeGame.getResultStatus() === ResultStatus.ResultsFinal) {
             // These are final results
-            console.log("Results are final");
           }
         }
       })
@@ -109,7 +108,6 @@ class Round extends Component<RoundProps, RoundState> {
     const activeGame: Game = this.state.matchData.getActiveGame();
     if (activeGame.getResultStatus() === ResultStatus.NoResults) {
       // Waiting on other votes
-      console.log("No results have been reported");
       this.setState({
         resultStatus: ResultStatus.NoResults,
         resultStatusMsg: ResultStatusMsg.NoResults,
@@ -119,7 +117,6 @@ class Round extends Component<RoundProps, RoundState> {
       if (this.state.matchData.getPlayer1().getID() === this.state.playerID) {
         if (activeGame.getPlayer1Voted()) {
           // Waiting on other votes
-          console.log("Awaiting final results");
           this.setState({
             resultStatus: ResultStatus.ResultsPending,
             resultStatusMsg: ResultStatusMsg.ResultsPending,
@@ -128,7 +125,6 @@ class Round extends Component<RoundProps, RoundState> {
       } else {
         if (activeGame.getPlayer2Voted()) {
           // Waiting on other votes
-          console.log("Awaiting final results");
           this.setState({
             resultStatus: ResultStatus.ResultsPending,
             resultStatusMsg: ResultStatusMsg.ResultsPending,
@@ -137,14 +133,12 @@ class Round extends Component<RoundProps, RoundState> {
       }
     } else if (activeGame.getResultStatus() === ResultStatus.ResultsDisputed) {
       // Disputed results
-      console.log("Results are being disputed");
       this.setState({
         resultStatus: ResultStatus.ResultsDisputed,
         resultStatusMsg: ResultStatusMsg.ResutsDisputed,
       });
     } else if (activeGame.getResultStatus() === ResultStatus.ResultsFinal) {
       // Final results
-      console.log("Results are final");
       this.setState({
         resultStatus: ResultStatus.ResultsFinal,
         resultStatusMsg: ResultStatusMsg.ResultsFinal,

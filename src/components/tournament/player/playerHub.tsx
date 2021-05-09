@@ -76,7 +76,6 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
     )
       .then((res) => res.json())
       .then((matchDataInit: MatchDataIntf) => {
-        console.log("Player ready: ", matchDataInit);
         this.setState({ matchData: new MatchData(matchDataInit) });
       })
       .catch((err) =>
@@ -130,22 +129,6 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
   }
 
   render() {
-    console.log(
-      "Tournament status: ",
-      this.state.tournament.getTournamentStatus()
-    );
-    console.log(
-      "Match status: ",
-      this.state.matchData.getMatch().getMatchStatus()
-    );
-    console.log(
-      "Player ready: ",
-      this.state.matchData
-        .getMatch()
-        .getPlayerReadyByID(this.state.currPlayer.getID())
-    );
-    console.log("Room code: ", this.state.currPlayer.getRoomCode());
-
     if (
       // Waiting for player to ready up
       this.state.tournament.getTournamentStatus() ===

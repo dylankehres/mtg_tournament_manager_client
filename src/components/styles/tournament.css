@@ -1,9 +1,9 @@
 label.hostForm {
-  color: #fff;
+  color: black;
 }
 
 .tournamentInfo {
-  display: flex;
-  flex-direction: column;
-  color: #fff;
+  display: grid;
+  grid-template-columns: auto;
+  color: black;
 }

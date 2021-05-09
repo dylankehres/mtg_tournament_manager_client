@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { PlayerInfo, PlayerInfoIntf } from "../../dtos/playerInfo";
 import { MatchData } from "../../dtos/matchData";
 import { Match } from "../../dtos/match";
@@ -16,13 +16,33 @@ const PlayerInfoModal: React.FunctionComponent<PlayerInfoModalProps> = (
   props
 ) => {
   const [show, setShow]: [boolean, Function] = useState(false);
+  const [playerInfo, setPlayerInfo]: [PlayerInfo, Function] = useState(
+    new PlayerInfo()
+  );
 
   const handleClose = () => setShow(false);
 
-  function handleShow() {
+  const handleShow = () => {
+    getPlayerInfo();
     setShow(true);
-  }
+  };
 
+  const getPlayerInfo = (): void => {
+    fetch(`${props.serverAddress}/playerInfo/${props.player.getID()}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((playerInfoInit: PlayerInfoIntf) => {
+        setPlayerInfo(new PlayerInfo(playerInfoInit));
+      })
+      .catch((err) =>
+        console.log("Fetch Error in getPlayerInfo for playerInfo.jsx", err)
+      );
+  };
   return (
     <React.Fragment>
       <div>
@@ -38,7 +58,7 @@ const PlayerInfoModal: React.FunctionComponent<PlayerInfoModalProps> = (
         </Modal.Header>
         <Modal.Body>
           <PlayerInfoComponent
-            playerID={props.player.getID()}
+            playerInfo={playerInfo}
             serverAddress={props.serverAddress}
             key={`playerInfo_${props.player.getID()}`}
           />
@@ -54,61 +74,38 @@ const PlayerInfoModal: React.FunctionComponent<PlayerInfoModalProps> = (
 };
 
 export interface PlayerInfoProps {
-  playerID: String;
+  playerInfo: PlayerInfo;
   serverAddress: String;
 }
 
 const PlayerInfoComponent: React.FunctionComponent<PlayerInfoProps> = (
   props
 ) => {
-  const [playerInfo, setPlayerInfo]: [PlayerInfo, Function] = useState(
-    new PlayerInfo()
-  );
-
-  const getPlayerInfo = (): void => {
-    fetch(`${props.serverAddress}/playerInfo/${props.playerID}`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((playerInfoInit: PlayerInfoIntf) => {
-        console.log("setPlayerInfo(new PlayerInfo(playerInfoInit))");
-        setPlayerInfo(new PlayerInfo(playerInfoInit));
-      })
-      .catch((err) =>
-        console.log("Fetch Error in getPlayerInfo for playerInfo.jsx", err)
-      );
-  };
-
-  useEffect(() => {
-    console.log("getPlayerInfo()");
-    getPlayerInfo();
-  }, []);
-
-  if (playerInfo.getPlayer().getID() !== "") {
+  if (props.playerInfo.getPlayer().getID() !== "") {
     return (
       <React.Fragment>
         <div>
-          {playerInfo.getPlayer().getName()} (
-          {playerInfo.getPlayer().getPoints()} points)
+          {props.playerInfo.getPlayer().getName()} (
+          {props.playerInfo.getPlayer().getPoints()} points)
         </div>
-        <div>Tournament: {playerInfo.getTournament().getName()}</div>
-        <div>Format: {playerInfo.getTournament().getFormat()}</div>
-        <div>Deck Name: {playerInfo.getPlayer().getDeckName()}</div>
-        <div>Deck List: {playerInfo.getPlayer().getDeckList()}</div>
+        <div>Tournament: {props.playerInfo.getTournament().getName()}</div>
+        <div>Format: {props.playerInfo.getTournament().getFormat()}</div>
+        <div>Deck Name: {props.playerInfo.getPlayer().getDeckName()}</div>
+        <div>Deck List: {props.playerInfo.getPlayer().getDeckList()}</div>
         <div>Opponents: </div>
-        {playerInfo.getMatchDataList().map((matchData: MatchData) => (
-          <div>
-            {matchData.getOpponentByPlayerID(playerInfo.getPlayer().getID())}
-            <MatchRecord
-              playerID={playerInfo.getPlayer().getID()}
-              match={matchData.getMatch()}
-            />
-          </div>
-        ))}
+        {props.playerInfo
+          .getMatchDataList()
+          .map((matchData: MatchData, index) => (
+            <div key={index}>
+              {matchData
+                .getOpponentByPlayerID(props.playerInfo.getPlayer().getID())
+                .getName()}
+              <MatchRecord
+                playerID={props.playerInfo.getPlayer().getID()}
+                match={matchData.getMatch()}
+              />
+            </div>
+          ))}
       </React.Fragment>
     );
   } else {
@@ -145,16 +142,19 @@ const MatchRecord: React.FunctionComponent<MatchRecordProps> = (props) => {
 
   if (draws > 0) {
     return (
-      <span>
-        {resultText} {wins}-{losses}-{draws}
-      </span>
+      <React.Fragment>
+        <span>
+          {resultText} {wins}-{losses}-{draws}
+        </span>
+      </React.Fragment>
     );
   }
 
   return (
-    <span>
-      {resultText} {wins}-{losses}
-    </span>
+    <React.Fragment>
+      {`${resultText} ${wins}-${losses}`}
+      {"Potat"}
+    </React.Fragment>
   );
 };
 

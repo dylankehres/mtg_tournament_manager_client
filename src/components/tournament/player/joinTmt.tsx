@@ -1,6 +1,6 @@
 import { Tournament, TournamentIntf } from "components/dtos/tournament";
 import React, { useEffect, useState } from "react";
-import { Form, Button, Table } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import { Redirect, useParams } from "react-router-dom";
 import TmtList from "../tmtList";
 import TournamentInfo from "../tournamentInfo";
@@ -129,27 +129,29 @@ const JoinTmt: React.FunctionComponent<JoinTmtProps> = (props) => {
   if (id === "") {
     if (tournament.getID() === "") {
       return (
-        <React.Fragment>
-          <Form>
-            <Form.Group className="m-2" style={{ width: "300px" }}>
-              <Form.Label className="joinForm">Room Code</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Room code"
-                className="joinForm"
-                value={roomCode}
-                onChange={handleRoomChange}
-              ></Form.Control>
-            </Form.Group>
-            <Button
-              className="btn btn-primary m-2"
-              disabled={roomCode === ""}
-              // onClick={() => handleFindTmt()}
-              href={"/join/" + roomCode}
-            >
-              Find Tournament
-            </Button>
-          </Form>
+        <div className="joinTmtGrid">
+          <div>
+            <Form>
+              <Form.Group className="m-2" style={{ width: "300px" }}>
+                <Form.Label className="joinForm">Room Code</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Room code"
+                  className="joinForm"
+                  value={roomCode}
+                  onChange={handleRoomChange}
+                ></Form.Control>
+              </Form.Group>
+              <Button
+                className="btn btn-primary m-2"
+                disabled={roomCode === ""}
+                // onClick={() => handleFindTmt()}
+                href={"/join/" + roomCode}
+              >
+                Find Tournament
+              </Button>
+            </Form>
+          </div>
           <div>
             <TmtList
               serverAddress={props.serverAddress}
@@ -157,74 +159,69 @@ const JoinTmt: React.FunctionComponent<JoinTmtProps> = (props) => {
               tmtBtnName="Join"
             />
           </div>
-        </React.Fragment>
+        </div>
       );
     } else {
       return (
-        <React.Fragment>
-          <Table>
-            <tbody>
-              <tr>
-                <td>
-                  <Form>
-                    <Form.Group className="m-2" style={{ width: "300px" }}>
-                      <Form.Label className="joinForm">Player Name</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Player name"
-                        className="joinForm"
-                        value={name}
-                        onChange={handleNameChange}
-                      ></Form.Control>
-                      {/* <Form.Label>Room Code</Form.Label>
+        <div className="joinTmtGrid">
+          <div>
+            <Form>
+              <Form.Group className="m-2" style={{ width: "300px" }}>
+                <Form.Label className="joinForm">Player Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Player name"
+                  className="joinForm"
+                  value={name}
+                  onChange={handleNameChange}
+                ></Form.Control>
+                {/* <Form.Label>Room Code</Form.Label>
                       <Form.Control
                         type="text"
                         placeholder="Room code"
                         value={roomCode}
                         onChange={handleRoomChange}
                       ></Form.Control> */}
-                      <Form.Label className="joinForm">Deck Name</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Deck name"
-                        className="joinForm"
-                        value={deckName}
-                        onChange={handleDeckNameChange}
-                      ></Form.Control>
-                      <Form.Label className="joinForm">Deck List</Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        rows={15}
-                        className="joinForm"
-                        placeholder={
-                          "4 Devoted Druid \n4 Vizier of Remedies \n1 Walking Ballista"
-                        }
-                        value={deckList}
-                        onChange={handleDeckListChange}
-                      ></Form.Control>
-                    </Form.Group>
-                    <Button
-                      className="btn btn-primary m-2"
-                      disabled={getJoinDisabled()}
-                      onClick={() => handleJoinTmt()}
-                    >
-                      Join Tournament
-                    </Button>
-                  </Form>
-                </td>
-                {/* <td>
+                <Form.Label className="joinForm">Deck Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Deck name"
+                  className="joinForm"
+                  value={deckName}
+                  onChange={handleDeckNameChange}
+                ></Form.Control>
+                <Form.Label className="joinForm">Deck List</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={15}
+                  className="joinForm"
+                  placeholder={
+                    "4 Devoted Druid \n4 Vizier of Remedies \n1 Walking Ballista"
+                  }
+                  value={deckList}
+                  onChange={handleDeckListChange}
+                ></Form.Control>
+              </Form.Group>
+              <Button
+                className="btn btn-primary m-2"
+                disabled={getJoinDisabled()}
+                onClick={() => handleJoinTmt()}
+              >
+                Join Tournament
+              </Button>
+            </Form>
+
+            {/* <td>
                   <TmtList serverAddress={props.serverAddress} />
                 </td> */}
-              </tr>
-              <tr>
-                <TournamentInfo
-                  tournament={tournament}
-                  serverAddress={props.serverAddress}
-                />
-              </tr>
-            </tbody>
-          </Table>
-        </React.Fragment>
+          </div>
+          <div>
+            <TournamentInfo
+              tournament={tournament}
+              serverAddress={props.serverAddress}
+            />
+          </div>
+        </div>
       );
     }
   }

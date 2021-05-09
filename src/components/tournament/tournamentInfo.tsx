@@ -38,7 +38,6 @@ const TournamentInfo: React.FunctionComponent<TournamentInfoProps> = (
   };
 
   useEffect(() => {
-    console.log("getPlayerList()");
     getPlayerList();
   }, []);
 

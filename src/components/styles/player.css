@@ -1,7 +1,12 @@
 label.joinForm {
-  color: #fff;
+  color: black;
 }
 
 .playerList {
-  color: #fff;
+  color: black;
+}
+
+.joinTmtGrid {
+  display: grid;
+  grid-template-columns: auto auto;
 }
