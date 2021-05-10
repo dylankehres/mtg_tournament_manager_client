@@ -10,6 +10,7 @@ import { MatchData, MatchDataIntf } from "../../dtos/matchData";
 import { Tournament, TournamentStatus } from "components/dtos/tournament";
 import { MatchStatus } from "components/dtos/match";
 import { PlayerHubDtoIntf } from "components/dtos/hubDtos";
+import LoadingDiv from "components/loadingDiv";
 
 type PlayerHubProps = {
   serverAddress: string;
@@ -219,7 +220,7 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
         </div>
       );
     } else {
-      return <h2>Loading...</h2>;
+      return <LoadingDiv />;
     }
   }
 }

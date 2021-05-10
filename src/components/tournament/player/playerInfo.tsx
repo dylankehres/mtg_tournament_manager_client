@@ -3,7 +3,7 @@ import { PlayerInfo, PlayerInfoIntf } from "../../dtos/playerInfo";
 import { MatchData } from "../../dtos/matchData";
 import { Match } from "../../dtos/match";
 import { Button, Modal } from "react-bootstrap";
-// import "../styles/player.css";
+import "../../styles/player/playerInfo.css";
 import { Player } from "components/dtos/player";
 import LoadingDiv from "components/loadingDiv";
 
@@ -45,16 +45,16 @@ const PlayerInfoModal: React.FunctionComponent<PlayerInfoModalProps> = (
   };
   return (
     <React.Fragment>
-      <div>
-        <a href="#" onClick={handleShow}>
+      <div className="playerNameDiv">
+        <span className="playerName" onClick={handleShow}>
           {props.player.getName()}
-        </a>
+        </span>
         <span>{" (" + props.player.getPoints() + " pts)"}</span>
       </div>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header>
-          <Modal.Title>Player Info</Modal.Title>
+          <Modal.Title>{props.player.getName()}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <PlayerInfoComponent
@@ -75,7 +75,7 @@ const PlayerInfoModal: React.FunctionComponent<PlayerInfoModalProps> = (
 
 export interface PlayerInfoProps {
   playerInfo: PlayerInfo;
-  serverAddress: String;
+  serverAddress: string;
 }
 
 const PlayerInfoComponent: React.FunctionComponent<PlayerInfoProps> = (
@@ -83,30 +83,46 @@ const PlayerInfoComponent: React.FunctionComponent<PlayerInfoProps> = (
 ) => {
   if (props.playerInfo.getPlayer().getID() !== "") {
     return (
-      <React.Fragment>
+      <div className="playerInfoComponentGrid">
+        <div className="playerInfoLabel">Name:</div>
         <div>
           {props.playerInfo.getPlayer().getName()} (
           {props.playerInfo.getPlayer().getPoints()} points)
         </div>
-        <div>Tournament: {props.playerInfo.getTournament().getName()}</div>
-        <div>Format: {props.playerInfo.getTournament().getFormat()}</div>
-        <div>Deck Name: {props.playerInfo.getPlayer().getDeckName()}</div>
-        <div>Deck List: {props.playerInfo.getPlayer().getDeckList()}</div>
-        <div>Opponents: </div>
-        {props.playerInfo
-          .getMatchDataList()
-          .map((matchData: MatchData, index) => (
-            <div key={index}>
-              {matchData
-                .getOpponentByPlayerID(props.playerInfo.getPlayer().getID())
-                .getName()}
-              <MatchRecord
-                playerID={props.playerInfo.getPlayer().getID()}
-                match={matchData.getMatch()}
-              />
-            </div>
-          ))}
-      </React.Fragment>
+        <div className="playerInfoLabel">Tournament: </div>
+        <div>{props.playerInfo.getTournament().getName()}</div>
+        <div className="playerInfoLabel">Format: </div>
+        <div>{props.playerInfo.getTournament().getFormat()}</div>
+        <div className="playerInfoLabel">Deck Name: </div>
+        <div>{props.playerInfo.getPlayer().getDeckName()}</div>
+        <div className="playerInfoLabel">Deck List: </div>
+        <div className="deckList">
+          {props.playerInfo.getPlayer().getDeckList()}
+        </div>
+        <div className="playerInfoLabel">Opponents: </div>
+        <div>
+          {props.playerInfo
+            .getMatchDataList()
+            .map((matchData: MatchData, index) => (
+              <div className="opponentList" key={index}>
+                <div>
+                  <PlayerInfoModal
+                    serverAddress={props.serverAddress}
+                    player={matchData.getOpponentByPlayerID(
+                      props.playerInfo.getPlayer().getID()
+                    )}
+                  />
+                </div>
+                <div>
+                  <MatchRecord
+                    playerID={props.playerInfo.getPlayer().getID()}
+                    match={matchData.getMatch()}
+                  />
+                </div>
+              </div>
+            ))}
+        </div>
+      </div>
     );
   } else {
     return <LoadingDiv />;
@@ -131,8 +147,8 @@ const MatchRecord: React.FunctionComponent<MatchRecordProps> = (props) => {
     losses = props.match.getPlayer1Wins();
   }
 
-  let resultText: String = "";
-  if (draws >= wins) {
+  let resultText: string = "";
+  if (draws >= wins && draws >= losses) {
     resultText = "Draw";
   } else if (wins > losses) {
     resultText = "Won";
@@ -150,12 +166,7 @@ const MatchRecord: React.FunctionComponent<MatchRecordProps> = (props) => {
     );
   }
 
-  return (
-    <React.Fragment>
-      {`${resultText} ${wins}-${losses}`}
-      {"Potat"}
-    </React.Fragment>
-  );
+  return <React.Fragment>{`${resultText} ${wins}-${losses}`}</React.Fragment>;
 };
 
 export { PlayerInfoModal };

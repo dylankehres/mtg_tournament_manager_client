@@ -1,9 +1,3 @@
 label.hostForm {
   color: black;
 }
-
-.tournamentInfo {
-  display: grid;
-  grid-template-columns: auto;
-  color: black;
-}

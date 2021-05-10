@@ -1,0 +1,27 @@
+.playerName {
+  /* text-decoration: underline; */
+  color: #0645ad;
+  cursor: pointer;
+}
+
+.playerNameDiv {
+  white-space: nowrap;
+}
+
+.playerInfoComponentGrid {
+  display: grid;
+  grid-template-columns: auto auto;
+}
+
+.playerInfoLabel {
+  font-weight: bold;
+}
+
+.opponentList {
+  display: grid;
+  grid-template-columns: min-content auto;
+}
+
+.deckList {
+  white-space: pre-line;
+}

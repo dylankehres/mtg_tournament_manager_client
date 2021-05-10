@@ -9,6 +9,7 @@ import { MatchStatus } from "components/dtos/match";
 import { Player } from "../../dtos/player";
 import { HostHubDtoIntf } from "components/dtos/hubDtos";
 import "../../styles/player.css";
+import LoadingDiv from "components/loadingDiv";
 
 type HostHubProps = {
   serverAddress: string;
@@ -202,7 +203,7 @@ class HostHub extends Component<HostHubProps, HostHubState> {
 
   render() {
     if (this.state.tournament.getRoomCode() === "") {
-      return <h2>Loading...</h2>;
+      return <LoadingDiv />;
     } else if (
       this.state.tournament.getTournamentStatus() === TournamentStatus.Complete
     ) {

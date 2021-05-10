@@ -1,0 +1,9 @@
+.tournamentInfo {
+  display: grid;
+  grid-template-columns: auto;
+  color: black;
+}
+
+.tournamentInfoLabel {
+  font-weight: bold;
+}
