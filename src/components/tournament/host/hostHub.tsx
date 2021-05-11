@@ -139,6 +139,7 @@ class HostHub extends Component<HostHubProps, HostHubState> {
           <FinalResults
             tournament={this.state.tournament}
             playerList={this.state.playerList}
+            serverAddress={this.props.serverAddress}
           />
           <Button
             className="btn btn-danger m-2"

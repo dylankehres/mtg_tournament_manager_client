@@ -195,6 +195,7 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
           <FinalResults
             tournament={this.state.tournament}
             playerList={this.state.playerList}
+            serverAddress={this.props.serverAddress}
           />
         );
       } else {

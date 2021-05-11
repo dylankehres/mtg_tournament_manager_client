@@ -130,7 +130,7 @@ enum ResultStatusMsg {
   NoResults = "",
   ResultsPending = "Waiting for your opponent to report results...",
   ResultsFinal = "Your results have been reported. Waiting for the next round to begin...",
-  ResutsDisputed = "Your opponent reported a different result. Please settle this dispute, calling a judge if necessary, and resubmit your resutls.",
+  ResutsDisputed = "Your opponent reported a different result. Please settle this dispute, calling a judge if necessary, and resubmit your results.",
 }
 
 export { Game, ResultStatus, ResultStatusMsg };
