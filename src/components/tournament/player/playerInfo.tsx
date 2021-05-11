@@ -19,6 +19,7 @@ const PlayerInfoModal: React.FunctionComponent<PlayerInfoModalProps> = (
   const [playerInfo, setPlayerInfo]: [PlayerInfo, Function] = useState(
     new PlayerInfo()
   );
+  const [loading, setLoading]: [boolean, Function] = useState(false);
 
   const handleClose = () => setShow(false);
 
@@ -28,6 +29,7 @@ const PlayerInfoModal: React.FunctionComponent<PlayerInfoModalProps> = (
   };
 
   const getPlayerInfo = (): void => {
+    setLoading(true);
     fetch(`${props.serverAddress}/playerInfo/${props.player.getID()}`, {
       method: "GET",
       headers: {
@@ -38,6 +40,7 @@ const PlayerInfoModal: React.FunctionComponent<PlayerInfoModalProps> = (
       .then((res) => res.json())
       .then((playerInfoInit: PlayerInfoIntf) => {
         setPlayerInfo(new PlayerInfo(playerInfoInit));
+        setLoading(false);
       })
       .catch((err) =>
         console.log("Fetch Error in getPlayerInfo for playerInfo.jsx", err)
@@ -60,6 +63,7 @@ const PlayerInfoModal: React.FunctionComponent<PlayerInfoModalProps> = (
           <PlayerInfoComponent
             playerInfo={playerInfo}
             serverAddress={props.serverAddress}
+            loading={loading}
             key={`playerInfo_${props.player.getID()}`}
           />
         </Modal.Body>
@@ -75,6 +79,7 @@ const PlayerInfoModal: React.FunctionComponent<PlayerInfoModalProps> = (
 
 export interface PlayerInfoProps {
   playerInfo: PlayerInfo;
+  loading: boolean;
   serverAddress: string;
 }
 
@@ -125,7 +130,7 @@ const PlayerInfoComponent: React.FunctionComponent<PlayerInfoProps> = (
       </div>
     );
   } else {
-    return <LoadingDiv />;
+    return <LoadingDiv loading={props.loading} />;
   }
 };
 

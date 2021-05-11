@@ -24,6 +24,7 @@ type HostHubState = {
   tournament: Tournament;
   pairings: MatchData[];
   playerList: Player[];
+  loading: boolean;
 };
 
 class HostHub extends Component<HostHubProps, HostHubState> {
@@ -31,6 +32,7 @@ class HostHub extends Component<HostHubProps, HostHubState> {
     tournament: new Tournament(),
     pairings: new Array<MatchData>(),
     playerList: new Array<Player>(),
+    loading: false,
   };
 
   handleCancelTmt() {
@@ -48,6 +50,7 @@ class HostHub extends Component<HostHubProps, HostHubState> {
   }
 
   generatePairings() {
+    this.setState({ loading: true });
     fetch(
       `${this.props.serverAddress}/host/pairings/${this.props.match.params.tmtID}`,
       {
@@ -61,95 +64,13 @@ class HostHub extends Component<HostHubProps, HostHubState> {
       .then((res) => res.json())
       .then((hostHubInit: HostHubDtoIntf) => {
         this.buildStateFromHostHubDTO(hostHubInit);
+        this.setState({ loading: false });
       })
-      // .then((matchDataInitArr: MatchDataIntf[]) => {
-      //   const pairings: MatchData[] = [];
-      //   matchDataInitArr.forEach((matchDataInit) =>
-      //     pairings.push(new MatchData(matchDataInit))
-      //   );
-      //   this.setState({ pairings });
-      // })
-      .catch((err) => console.log("Fetch Error in generatePairings", err));
+      .catch((err) => {
+        console.log("Fetch Error in generatePairings", err);
+        this.setState({ loading: false });
+      });
   }
-
-  // getPairings() {
-  //   this.getTournamentData()
-  //     .then((initTournament: TournamentIntf) => {
-  //       const tournament: Tournament = new Tournament(initTournament);
-
-  //       if (tournament.getRoomCode() === "") {
-  //         alert("Something went wrong. Please try that again.");
-  //       } else {
-  //         this.setState({ tournament });
-  //         this.getPlayerList();
-
-  //         fetch(
-  //           `${
-  //             this.props.serverAddress
-  //           }/pairings/${this.state.tournament.getRoomCode()}`,
-  //           {
-  //             method: "GET",
-  //             headers: {
-  //               Accept: "application/json",
-  //               "Content-Type": "application/json",
-  //             },
-  //           }
-  //         )
-  //           .then((res) => res.json())
-  //           .then((matchDataInitArr: MatchDataIntf[]) => {
-  //             const pairings: MatchData[] = [];
-  //             matchDataInitArr.forEach((matchDataInit) =>
-  //               pairings.push(new MatchData(matchDataInit))
-  //             );
-  //             this.setState({ pairings });
-  //           })
-  //           .catch((err) =>
-  //             console.log("Fetch Error in getPairings for startTmt.jsx", err)
-  //           );
-  //       }
-  //     })
-  //     .catch((err) => console.log("Fetch Error in getTournamentData", err));
-  // }
-
-  // getTournamentData() {
-  //   return fetch(
-  //     `${this.props.serverAddress}/host/${this.props.match.params.tmtID}`,
-  //     {
-  //       method: "GET",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json",
-  //       },
-  //     }
-  //   ).then((res) => res.json());
-  // }
-
-  // getPlayerList(): void {
-  //   const playerList: Player[] = [];
-
-  //   fetch(
-  //     `${
-  //       this.props.serverAddress
-  //     }/playerList/${this.state.tournament.getRoomCode()}`,
-  //     {
-  //       method: "GET",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json",
-  //       },
-  //     }
-  //   )
-  //     .then((res) => res.json())
-  //     .then((initPlayerfList: PlayerIntf[]) => {
-  //       if (initPlayerfList.length > 0) {
-  //         initPlayerfList.forEach((initPlayer) =>
-  //           playerList.push(new Player(initPlayer))
-  //         );
-  //         console.log("player list", playerList);
-  //         this.setState({ playerList });
-  //       }
-  //     });
-  // }
 
   buildStateFromHostHubDTO(hostHubInit: HostHubDtoIntf): void {
     const playerList = new Array<Player>();
@@ -170,6 +91,7 @@ class HostHub extends Component<HostHubProps, HostHubState> {
   }
 
   getHostHubData(): void {
+    this.setState({ loading: true });
     fetch(
       `${this.props.serverAddress}/hostHub/${this.props.match.params.tmtID}`,
       {
@@ -182,7 +104,13 @@ class HostHub extends Component<HostHubProps, HostHubState> {
     )
       .then((res) => res.json())
       .then((hostHubInit: HostHubDtoIntf) => {
+        console.log("hostHubInit: ", hostHubInit);
         this.buildStateFromHostHubDTO(hostHubInit);
+        this.setState({ loading: false });
+      })
+      .catch((err) => {
+        console.log("Fetch error occured in getHostHubData", err);
+        this.setState({ loading: false });
       });
   }
 
@@ -197,13 +125,12 @@ class HostHub extends Component<HostHubProps, HostHubState> {
   }
 
   componentDidMount() {
-    // this.getPairings();
     this.getHostHubData();
   }
 
   render() {
     if (this.state.tournament.getRoomCode() === "") {
-      return <LoadingDiv />;
+      return <LoadingDiv loading={this.state.loading} />;
     } else if (
       this.state.tournament.getTournamentStatus() === TournamentStatus.Complete
     ) {

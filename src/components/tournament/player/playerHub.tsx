@@ -27,6 +27,7 @@ type PlayerHubState = {
   pairings: MatchData[];
   matchData: MatchData;
   currPlayer: Player;
+  loading: boolean;
 };
 
 class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
@@ -36,6 +37,7 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
     pairings: new Array<MatchData>(),
     matchData: new MatchData(),
     currPlayer: new Player(),
+    loading: false,
   };
 
   constructor(props: PlayerHubProps) {
@@ -109,6 +111,7 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
   }
 
   getPlayerHubData(): void {
+    this.setState({ loading: true });
     fetch(
       `${this.props.serverAddress}/playerHub/${this.props.match.params.playerID}`,
       {
@@ -122,6 +125,11 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
       .then((res) => res.json())
       .then((playerHubInit: PlayerHubDtoIntf) => {
         this.buildStateFromPlayerHubDto(playerHubInit);
+        this.setState({ loading: false });
+      })
+      .catch((err) => {
+        console.log("Fetch error occurred in getPlayerHubData()", err);
+        this.setState({ loading: false });
       });
   }
 
@@ -220,7 +228,7 @@ class PlayerHub extends Component<PlayerHubProps, PlayerHubState> {
         </div>
       );
     } else {
-      return <LoadingDiv />;
+      return <LoadingDiv loading={this.state.loading} />;
     }
   }
 }

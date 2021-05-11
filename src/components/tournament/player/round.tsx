@@ -27,6 +27,7 @@ type RoundState = {
   matchData: MatchData;
   winnersList: string[];
   timeRemaining: number;
+  loading: boolean;
 };
 
 class Round extends Component<RoundProps, RoundState> {
@@ -38,6 +39,7 @@ class Round extends Component<RoundProps, RoundState> {
     matchData: new MatchData(),
     winnersList: [],
     timeRemaining: -1,
+    loading: false,
   };
 
   playerGameWin() {
@@ -146,47 +148,6 @@ class Round extends Component<RoundProps, RoundState> {
     }
   }
 
-  // getMatchData(): void {
-  //   fetch(
-  //     `${this.props.serverAddress}/match/${this.props.playerID}`,
-  //     {
-  //       method: "GET",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json",
-  //       },
-  //     }
-  //   )
-  //     .then((res) => res.json())
-  //     .then((matchDataInit: MatchDataIntf) => {
-  //       this.setState({ matchData: new MatchData(matchDataInit) });
-  //       this.setState({
-  //         timeRemaining:
-  //           this.state.matchData.getMatch().getEndTime() - Date.now(),
-  //       });
-
-  //       console.log("setState timeRemaining: ", this.state.timeRemaining);
-
-  //       if (
-  //         this.props.playerID ===
-  //         this.state.matchData.getPlayer1().getID()
-  //       ) {
-  //         this.setState({
-  //           playerID: this.state.matchData.getPlayer1().getID(),
-  //           opponentID: this.state.matchData.getPlayer2().getID(),
-  //         });
-  //       } else {
-  //         this.setState({
-  //           playerID: this.state.matchData.getPlayer2().getID(),
-  //           opponentID: this.state.matchData.getPlayer1().getID(),
-  //         });
-  //       }
-  //       this.setResultStatusMsg();
-  //       this.buildWinnersList();
-  //     })
-  //     .catch((err) => console.log("Ajax Error in round.tsx getMatchData", err));
-  // }
-
   setTimeRemaining(): void {
     this.setState({
       timeRemaining: this.state.matchData.getMatch().getEndTime() - Date.now(),
@@ -222,12 +183,12 @@ class Round extends Component<RoundProps, RoundState> {
   }
 
   buildRoundData(): void {
-    // const matchData = new MatchData(this.props.matchDataInit);
-    this.setState({ matchData: this.props.matchData }, () => {
+    this.setState({ matchData: this.props.matchData, loading: true }, () => {
       this.setTimeRemaining();
       this.setPlayerAndOpponent(() => {
         this.setResultStatusMsg();
         this.buildWinnersList();
+        this.setState({ loading: false });
       });
     });
   }
@@ -264,19 +225,14 @@ class Round extends Component<RoundProps, RoundState> {
   }
 
   componentDidMount() {
-    // this.getMatchData();
     this.buildRoundData();
   }
 
   render() {
     if (this.state.playerID === "") {
-      return <LoadingDiv />;
+      return <LoadingDiv loading={this.state.loading} />;
     }
-    // if (
-    //   this.state.matchData.getMatch().getMatchStatus() === MatchStatus.Complete
-    // ) {
-    //   return <Redirect to={`/player/${this.state.playerID}`} />;
-    // }
+
     return (
       <div className="m-2">
         <table>
