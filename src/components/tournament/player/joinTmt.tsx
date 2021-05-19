@@ -5,21 +5,13 @@ import { Redirect, useParams } from "react-router-dom";
 import TmtList from "../tmtList";
 import TournamentInfo from "../tournamentInfo";
 import "../../styles/player.css";
-
-type JoinTmtProps = {
-  serverAddress: string;
-  match: {
-    params: {
-      code: string;
-    };
-  };
-};
+import { RootProps } from "root";
 
 interface JoinTmtRouterParams {
   roomCode: string;
 }
 
-const JoinTmt: React.FunctionComponent<JoinTmtProps> = (props) => {
+const JoinTmt: React.FunctionComponent<RootProps> = (props) => {
   const routerParams = useParams<JoinTmtRouterParams>();
   const [id, setID]: [string, Function] = useState("");
   const [name, setName]: [string, Function] = useState("");

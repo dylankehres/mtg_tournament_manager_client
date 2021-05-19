@@ -1,12 +1,9 @@
 import React, { Component } from "react";
 import { Form, Dropdown, Button } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
+import { RootProps } from "root";
 import { Formats } from "../../dtos/tournament";
 import "../../styles/tournament.css";
-
-type HostTmtProps = {
-  serverAddress: string;
-};
 
 type HostTmtState = {
   id: string;
@@ -17,7 +14,7 @@ type HostTmtState = {
   format: string;
 };
 
-class HostTmt extends Component<HostTmtProps, HostTmtState> {
+class HostTmt extends Component<RootProps, HostTmtState> {
   state = {
     id: "",
     name: "",
@@ -27,7 +24,7 @@ class HostTmt extends Component<HostTmtProps, HostTmtState> {
     format: "Select Format",
   };
 
-  constructor(props: HostTmtProps) {
+  constructor(props: RootProps) {
     super(props);
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleRoomChange = this.handleRoomChange.bind(this);
@@ -77,6 +74,7 @@ class HostTmt extends Component<HostTmtProps, HostTmtState> {
   }
 
   handleOpenTmt(): void {
+    console.log("serverAddress", this.props.serverAddress);
     if (this.formIsValid()) {
       const tournament = this.state;
       fetch(`${this.props.serverAddress}/host`, {

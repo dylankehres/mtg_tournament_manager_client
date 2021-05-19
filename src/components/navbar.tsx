@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Navbar,
-  Nav,
-  NavDropdown,
-  Form,
-  Button,
-  FormControl,
-} from "react-bootstrap";
+import { Navbar, Nav } from "react-bootstrap";
 
 const NavBar = () => {
   return (
@@ -15,7 +8,9 @@ const NavBar = () => {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
-          <NavDropdown title="Tournaments" id="basic-nav-dropdown">
+          <Nav.Link href="/join">Join</Nav.Link>
+          <Nav.Link href="/host">Host</Nav.Link>
+          {/* <NavDropdown title="Tournaments" id="basic-nav-dropdown">
             <NavDropdown.Item href="/join">Join</NavDropdown.Item>
             <NavDropdown.Item href="/host">Host</NavDropdown.Item>
           </NavDropdown>
@@ -28,12 +23,12 @@ const NavBar = () => {
             <NavDropdown.Item href="#action/3.3">RB Sacrafice</NavDropdown.Item>
             <NavDropdown.Divider />
             <NavDropdown.Item href="#action/3.4">More decks</NavDropdown.Item>
-          </NavDropdown>
+          </NavDropdown> */}
         </Nav>
-        <Form inline>
+        {/* <Form inline>
           <FormControl type="text" placeholder="Search" className="mr-sm-2" />
           <Button variant="outline-success">Search</Button>
-        </Form>
+        </Form> */}
       </Navbar.Collapse>
     </Navbar>
   );

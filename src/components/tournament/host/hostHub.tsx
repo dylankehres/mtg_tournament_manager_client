@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import PlayerList from "../playerList";
 import Pairings from "../pairings";
@@ -10,69 +10,62 @@ import { Player } from "../../dtos/player";
 import { HostHubDtoIntf } from "components/dtos/hubDtos";
 import "../../styles/player.css";
 import LoadingDiv from "components/loadingDiv";
+import { useParams } from "react-router";
+import { RootProps } from "root";
 
-type HostHubProps = {
-  serverAddress: string;
-  match: {
-    params: {
-      tmtID: string;
-    };
-  };
-};
+interface HostHubRouterParams {
+  tmtID: string;
+}
 
-type HostHubState = {
-  tournament: Tournament;
-  pairings: MatchData[];
-  playerList: Player[];
-  loading: boolean;
-};
+// class HostHub extends Component<HostHubProps, HostHubState> {
+const HostHub: React.FunctionComponent<RootProps> = (props) => {
+  const routerParams = useParams<HostHubRouterParams>();
+  const [tournament, setTournament]: [Tournament, Function] = useState(
+    new Tournament()
+  );
+  const [pairings, setPairings]: [Array<MatchData>, Function] = useState(
+    new Array<MatchData>()
+  );
+  const [playerList, setPlayerList]: [Array<Player>, Function] = useState(
+    new Array<Player>()
+  );
+  const [loading, setLoading]: [boolean, Function] = useState(false);
 
-class HostHub extends Component<HostHubProps, HostHubState> {
-  state = {
-    tournament: new Tournament(),
-    pairings: new Array<MatchData>(),
-    playerList: new Array<Player>(),
-    loading: false,
-  };
-
-  handleCancelTmt() {
-    fetch(`${this.props.serverAddress}/host`, {
+  const handleCancelTmt = () => {
+    fetch(`${props.serverAddress}/host`, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: this.props.match.params.tmtID,
+      body: routerParams.tmtID,
     })
       .then((res) => res.json())
       .then(() => {})
       .catch((err) => console.log("Fetch Error in handleCancelTmt", err));
-  }
+  };
 
-  generatePairings() {
-    this.setState({ loading: true });
-    fetch(
-      `${this.props.serverAddress}/host/pairings/${this.props.match.params.tmtID}`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
+  const generatePairings = () => {
+    setLoading(true);
+    fetch(`${props.serverAddress}/host/pairings/${routerParams.tmtID}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
       .then((res) => res.json())
       .then((hostHubInit: HostHubDtoIntf) => {
-        this.buildStateFromHostHubDTO(hostHubInit);
-        this.setState({ loading: false });
+        buildStateFromHostHubDTO(hostHubInit);
+        setLoading(false);
       })
       .catch((err) => {
         console.log("Fetch Error in generatePairings", err);
-        this.setState({ loading: false });
+        setLoading(false);
       });
-  }
+  };
 
-  buildStateFromHostHubDTO(hostHubInit: HostHubDtoIntf): void {
+  const buildStateFromHostHubDTO = (hostHubInit: HostHubDtoIntf): void => {
     const playerList = new Array<Player>();
     for (let playerInit of hostHubInit.playerList) {
       playerList.push(new Player(playerInit));
@@ -83,129 +76,117 @@ class HostHub extends Component<HostHubProps, HostHubState> {
       pairings.push(new MatchData(matchInit));
     }
 
-    this.setState({
-      tournament: new Tournament(hostHubInit.tournament),
-      playerList,
-      pairings,
-    });
-  }
+    setTournament(new Tournament(hostHubInit.tournament));
+    setPlayerList(playerList);
+    setPairings(pairings);
+  };
 
-  getHostHubData(): void {
-    this.setState({ loading: true });
-    fetch(
-      `${this.props.serverAddress}/hostHub/${this.props.match.params.tmtID}`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    )
+  const getHostHubData = (): void => {
+    setLoading(true);
+    fetch(`${props.serverAddress}/hostHub/${routerParams.tmtID}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
       .then((res) => res.json())
       .then((hostHubInit: HostHubDtoIntf) => {
         console.log("hostHubInit: ", hostHubInit);
-        this.buildStateFromHostHubDTO(hostHubInit);
-        this.setState({ loading: false });
+        buildStateFromHostHubDTO(hostHubInit);
+        setLoading(false);
       })
       .catch((err) => {
         console.log("Fetch error occured in getHostHubData", err);
-        this.setState({ loading: false });
+        setLoading(false);
       });
-  }
+  };
 
-  roundInProgress(): boolean {
-    for (let matchData of this.state.pairings) {
+  const roundInProgress = (): boolean => {
+    for (let matchData of pairings) {
       if (matchData.getMatch().getMatchStatus() !== MatchStatus.Complete) {
         return true;
       }
     }
 
     return false;
-  }
+  };
 
-  componentDidMount() {
-    this.getHostHubData();
-  }
+  useEffect(() => getHostHubData(), []);
 
-  render() {
-    if (this.state.tournament.getRoomCode() === "") {
-      return <LoadingDiv loading={this.state.loading} />;
-    } else if (
-      this.state.tournament.getTournamentStatus() === TournamentStatus.Complete
-    ) {
-      return (
-        <React.Fragment>
-          <FinalResults
-            tournament={this.state.tournament}
-            playerList={this.state.playerList}
-            serverAddress={this.props.serverAddress}
-          />
+  // render() {
+  if (tournament.getRoomCode() === "") {
+    return <LoadingDiv loading={loading} />;
+  } else if (tournament.getTournamentStatus() === TournamentStatus.Complete) {
+    return (
+      <React.Fragment>
+        <FinalResults
+          tournament={tournament}
+          playerList={playerList}
+          serverAddress={props.serverAddress}
+        />
+        <Button
+          className="btn btn-danger m-2"
+          onClick={() => handleCancelTmt()}
+          href="/host"
+        >
+          End Tournament
+        </Button>
+      </React.Fragment>
+    );
+  } else if (tournament.getTournamentStatus() === TournamentStatus.InProgress) {
+    return (
+      <div className="m-2">
+        <Pairings
+          pairings={pairings}
+          serverAddress={props.serverAddress}
+          key={"pairings_" + tournament.getRoomCode()}
+        />
+        <Form>
+          <Button
+            className="btn btn-primary m-2"
+            disabled={roundInProgress()}
+            onClick={() => generatePairings()}
+          >
+            Start Next Round
+          </Button>
           <Button
             className="btn btn-danger m-2"
-            onClick={() => this.handleCancelTmt()}
+            onClick={() => handleCancelTmt()}
             href="/host"
           >
-            End Tournament
+            Cancel Tournament
           </Button>
-        </React.Fragment>
-      );
-    } else if (
-      this.state.tournament.getTournamentStatus() ===
-      TournamentStatus.InProgress
-    ) {
-      return (
-        <div className="m-2">
-          <Pairings
-            pairings={this.state.pairings}
-            serverAddress={this.props.serverAddress}
-            key={"pairings_" + this.state.tournament.getRoomCode()}
-          />
-          <Form>
-            <Button
-              className="btn btn-primary m-2"
-              disabled={this.roundInProgress()}
-              onClick={() => this.generatePairings()}
-            >
-              Start Next Round
-            </Button>
-            <Button
-              className="btn btn-danger m-2"
-              onClick={() => this.handleCancelTmt()}
-              href="/host"
-            >
-              Cancel Tournament
-            </Button>
-          </Form>
-        </div>
-      );
-    } else {
-      return (
-        <div className="m-2">
-          <PlayerList
-            serverAddress={this.props.serverAddress}
-            playerList={this.state.playerList}
-            key={"playerList_" + this.state.tournament.getRoomCode()}
-          />
-          <Form>
-            <Button
-              className="btn btn-primary m-2"
-              onClick={() => this.generatePairings()}
-            >
-              Start Tournament
-            </Button>
-            <Button
-              className="btn btn-danger m-2"
-              onClick={() => this.handleCancelTmt()}
-              href="/host"
-            >
-              Cancel Tournament
-            </Button>
-          </Form>
-        </div>
-      );
-    }
+        </Form>
+      </div>
+    );
+  } else {
+    return (
+      <div className="m-2">
+        <PlayerList
+          serverAddress={props.serverAddress}
+          playerList={playerList}
+          key={"playerList_" + tournament.getRoomCode()}
+        />
+        <Form>
+          <Button
+            className="btn btn-primary m-2"
+            onClick={() => generatePairings()}
+          >
+            Start Tournament
+          </Button>
+          <Button
+            className="btn btn-danger m-2"
+            onClick={() => handleCancelTmt()}
+            href="/host"
+          >
+            Cancel Tournament
+          </Button>
+        </Form>
+      </div>
+    );
   }
-}
+  // }
+};
 
 export default HostHub;

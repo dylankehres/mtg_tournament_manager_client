@@ -10,11 +10,6 @@ import { PlayerHubDtoIntf } from "components/dtos/hubDtos";
 type RoundProps = {
   serverAddress: string;
   playerID: string;
-  match: {
-    params: {
-      playerID: string;
-    };
-  };
   matchData: MatchData;
   updatePlayerHub: Function;
 };
@@ -60,7 +55,7 @@ class Round extends Component<RoundProps, RoundState> {
 
     fetch(
       `${this.props.serverAddress}/match/gameResults/${
-        this.props.match.params.playerID
+        this.props.playerID
       }/${winnerID}/${this.state.matchData.getMatch().getRoundNum()}`,
       {
         method: "POST",
@@ -156,10 +151,7 @@ class Round extends Component<RoundProps, RoundState> {
 
   setPlayerAndOpponent(fnCallback: Function): void {
     let playerAndOpponent = { playerID: "", opponentID: "" };
-    if (
-      this.props.match.params.playerID ===
-      this.state.matchData.getPlayer1().getID()
-    ) {
+    if (this.props.playerID === this.state.matchData.getPlayer1().getID()) {
       playerAndOpponent = {
         playerID: this.state.matchData.getPlayer1().getID(),
         opponentID: this.state.matchData.getPlayer2().getID(),
