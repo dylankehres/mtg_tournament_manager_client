@@ -46,6 +46,7 @@ const PlayerInfoModal: React.FunctionComponent<PlayerInfoModalProps> = (
         console.log("Fetch Error in getPlayerInfo for playerInfo.jsx", err)
       );
   };
+
   return (
     <React.Fragment>
       <div className="playerNameDiv">
