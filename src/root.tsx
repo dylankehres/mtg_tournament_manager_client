@@ -14,7 +14,9 @@ interface RootProps {
 
 const Root: React.FunctionComponent<RootProps> = () => {
   // const serverAddress = "http://localhost:8080/api/v1/tournament";
-  const serverAddress = "http://192.168.1.108:8080/api/v1/tournament";
+  // const serverAddress = "http://192.168.1.108:8080/api/v1/tournament";
+  const serverAddress =
+    "https://tournament-manager-server-56ogjznjja-uc.a.run.app/api/v1/tournament";
 
   return (
     <Router>
