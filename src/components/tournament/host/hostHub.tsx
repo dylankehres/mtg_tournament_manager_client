@@ -11,6 +11,7 @@ import { HostHubDtoIntf } from "components/dtos/hubDtos";
 import LoadingDiv from "components/loadingDiv";
 import { useParams } from "react-router";
 import { RootProps } from "root";
+import TournamentLabel from "../touramentLabel";
 
 interface HostHubRouterParams {
   tmtID: string;
@@ -119,6 +120,10 @@ const HostHub: React.FunctionComponent<RootProps> = (props) => {
   } else if (tournament.getTournamentStatus() === TournamentStatus.Complete) {
     return (
       <React.Fragment>
+        <TournamentLabel
+          serverAddress={props.serverAddress}
+          tournament={tournament}
+        />
         <FinalResults
           tournament={tournament}
           playerList={playerList}
@@ -136,6 +141,10 @@ const HostHub: React.FunctionComponent<RootProps> = (props) => {
   } else if (tournament.getTournamentStatus() === TournamentStatus.InProgress) {
     return (
       <div className="m-2">
+        <TournamentLabel
+          serverAddress={props.serverAddress}
+          tournament={tournament}
+        />
         <Pairings
           pairings={pairings}
           serverAddress={props.serverAddress}
@@ -162,6 +171,10 @@ const HostHub: React.FunctionComponent<RootProps> = (props) => {
   } else {
     return (
       <div className="m-2">
+        <TournamentLabel
+          serverAddress={props.serverAddress}
+          tournament={tournament}
+        />
         <PlayerList
           serverAddress={props.serverAddress}
           playerList={playerList}
