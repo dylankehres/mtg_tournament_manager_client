@@ -3,7 +3,7 @@ import { Form, Dropdown, Button } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
 import { RootProps } from "root";
 import { Formats } from "../../dtos/tournament";
-import "../../styles/tournament.css";
+import "../../styles/tournament/hostTmt.css";
 
 type HostTmtState = {
   id: string;

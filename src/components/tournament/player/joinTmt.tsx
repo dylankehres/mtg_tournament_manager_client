@@ -1,10 +1,14 @@
-import { Tournament, TournamentIntf } from "components/dtos/tournament";
+import {
+  Tournament,
+  TournamentIntf,
+  TournamentStatus,
+} from "components/dtos/tournament";
 import React, { useEffect, useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { Redirect, useParams } from "react-router-dom";
 import TmtList from "../tmtList";
 import TournamentInfo from "../tournamentInfo";
-import "../../styles/player.css";
+import "../../styles/player/joinTmt.css";
 import { RootProps } from "root";
 
 interface JoinTmtRouterParams {
@@ -75,15 +79,34 @@ const JoinTmt: React.FunctionComponent<RootProps> = (props) => {
           return res.json();
         })
         .then((tournamentInit: TournamentIntf) => {
+          console.log(tournamentInit);
           if (tournamentInit == null) {
-            alert("Tournament not found");
-            setRoomCode("");
+            tmtNotFound();
           } else {
-            setTournament(new Tournament(tournamentInit));
+            const foundTmt = new Tournament(tournamentInit);
+            if (foundTmt.getID() === "") {
+              tmtNotFound();
+            } else if (foundTmt.isCompleted()) {
+              alert(
+                "This tournament has concluded. Unable to join tournament."
+              );
+            } else {
+              setTournament(foundTmt);
+            }
           }
         })
         .catch((err) => console.log("Fetch Error in handleJoinTmt", err));
     }
+  };
+
+  const tmtNotFound = (): void => {
+    alert("Tournament not found");
+    setRoomCode("");
+  };
+
+  const handleClearTmt = (): void => {
+    setRoomCode("");
+    setTournament(new Tournament());
   };
 
   const handleTmtListBtnClick = (tmt: Tournament): void => {
@@ -137,19 +160,31 @@ const JoinTmt: React.FunctionComponent<RootProps> = (props) => {
               <Button
                 className="btn btn-primary m-2"
                 disabled={roomCode === ""}
-                // onClick={() => handleFindTmt()}
                 href={"/join/" + roomCode}
               >
                 Find Tournament
               </Button>
             </Form>
           </div>
-          <div>
-            <TmtList
-              serverAddress={props.serverAddress}
-              tmtBtnClick={handleTmtListBtnClick}
-              tmtBtnName="Join"
-            />
+          <div className="tmtListArea">
+            <div className="tmtListSection">
+              <div className="tmtTypeLabel">New Tournaments</div>
+              <TmtList
+                serverAddress={props.serverAddress}
+                tmtStatus={TournamentStatus.AwaitingStart}
+                tmtBtnClick={handleTmtListBtnClick}
+                tmtBtnName="Join"
+              />
+            </div>
+            <div className="tmtListSection">
+              <div className="tmtTypeLabel">Active Tournaments</div>
+              <TmtList
+                serverAddress={props.serverAddress}
+                tmtStatus={TournamentStatus.InProgress}
+                tmtBtnClick={handleTmtListBtnClick}
+                tmtBtnName="Join"
+              />
+            </div>
           </div>
         </div>
       );
@@ -200,6 +235,12 @@ const JoinTmt: React.FunctionComponent<RootProps> = (props) => {
                 onClick={() => handleJoinTmt()}
               >
                 Join Tournament
+              </Button>
+              <Button
+                className="btn btn-danger m-2"
+                onClick={() => handleClearTmt()}
+              >
+                Back
               </Button>
             </Form>
 

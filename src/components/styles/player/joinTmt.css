@@ -1,0 +1,22 @@
+label.joinForm {
+  color: black;
+}
+
+.joinTmtGrid {
+  display: flex;
+  flex-direction: column;
+}
+
+.tmtListArea {
+  padding-top: 32px;
+}
+
+.tmtListSection {
+  padding-bottom: 16px;
+}
+
+.tmtTypeLabel {
+  padding-bottom: 8px;
+  text-decoration: underline;
+  font-weight: bold;
+}

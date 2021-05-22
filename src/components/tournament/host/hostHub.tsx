@@ -8,7 +8,6 @@ import { Tournament, TournamentStatus } from "../../dtos/tournament";
 import { MatchStatus } from "components/dtos/match";
 import { Player } from "../../dtos/player";
 import { HostHubDtoIntf } from "components/dtos/hubDtos";
-import "../../styles/player.css";
 import LoadingDiv from "components/loadingDiv";
 import { useParams } from "react-router";
 import { RootProps } from "root";

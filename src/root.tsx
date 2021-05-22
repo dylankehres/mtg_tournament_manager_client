@@ -7,6 +7,7 @@ import JoinTmt from "./components/tournament/player/joinTmt";
 import PlayerHub from "./components/tournament/player/playerHub";
 import HostTmt from "./components/tournament/host/hostTmt";
 import HostHub from "./components/tournament/host/hostHub";
+import NotFound404 from "./components/NotFound404";
 
 interface RootProps {
   serverAddress: string;
@@ -14,7 +15,6 @@ interface RootProps {
 
 const Root: React.FunctionComponent<RootProps> = () => {
   // const serverAddress = "http://localhost:8080/api/v1/tournament";
-  // const serverAddress = "http://192.168.1.108:8080/api/v1/tournament";
   const serverAddress =
     "https://tournament-manager-server-56ogjznjja-uc.a.run.app/api/v1/tournament";
 
@@ -51,6 +51,7 @@ const Root: React.FunctionComponent<RootProps> = () => {
           path="/host/:tmtID"
           render={() => <HostHub serverAddress={serverAddress} />}
         />
+        <Route exact path="*" render={() => <NotFound404 />} />
       </Switch>
     </Router>
   );

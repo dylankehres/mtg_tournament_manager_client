@@ -2,7 +2,7 @@ import React from "react";
 import { Table } from "react-bootstrap";
 import { Player } from "../dtos/player";
 import { PlayerInfoModal } from "../tournament/player/playerInfo";
-import "../styles/player.css";
+import "../styles/player/playerList.css";
 
 export interface PlayerListProps {
   serverAddress: string;

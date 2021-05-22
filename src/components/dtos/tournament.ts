@@ -108,6 +108,10 @@ class Tournament {
   getActive(): boolean {
     return this.active;
   }
+
+  isCompleted(): boolean {
+    return this.getTournamentStatus() === TournamentStatus.Complete;
+  }
 }
 
 export { Tournament, TournamentStatus, Formats };

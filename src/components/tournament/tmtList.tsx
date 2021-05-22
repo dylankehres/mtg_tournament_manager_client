@@ -1,9 +1,14 @@
 import React, { Component } from "react";
 import { Button, Table } from "react-bootstrap";
-import { Tournament, TournamentIntf } from "../dtos/tournament";
+import {
+  Tournament,
+  TournamentIntf,
+  TournamentStatus,
+} from "../dtos/tournament";
 
 type TmtListProps = {
   serverAddress: string;
+  tmtStatus: TournamentStatus;
   tmtBtnClick: Function;
   tmtBtnName: string;
 };
@@ -17,8 +22,8 @@ class TmtList extends Component<TmtListProps, TmtListState> {
     tmtList: [],
   };
 
-  componentDidMount() {
-    fetch(`${this.props.serverAddress}/`, {
+  getTournamentList(status: number): void {
+    fetch(`${this.props.serverAddress}/tournaments/status/${status}`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -32,8 +37,12 @@ class TmtList extends Component<TmtListProps, TmtListState> {
         this.setState({ tmtList });
       })
       .catch((err) =>
-        console.log("Ajax Error in componentDidMount for tmtList.jsx", err)
+        console.log("Ajax Error in getTournamentList for tmtList.jsx", err)
       );
+  }
+
+  componentDidMount() {
+    this.getTournamentList(this.props.tmtStatus);
   }
 
   render() {
