@@ -15,7 +15,6 @@ const FinalResults: React.SFC<FinalResultsProps> = (
 ) => {
   return (
     <div className="m-2" style={{ width: "300px" }}>
-      <h3>{props.tournament.getName()}</h3>
       <h4>Final Results</h4>
       <Table striped bordered hover size="sm">
         <thead>
