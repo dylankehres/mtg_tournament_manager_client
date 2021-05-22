@@ -13,24 +13,7 @@ import { PlayerHubDtoIntf } from "components/dtos/hubDtos";
 import LoadingDiv from "components/loadingDiv";
 import { useParams } from "react-router-dom";
 import { RootProps } from "root";
-
-// type PlayerHubProps = {
-//   serverAddress: string;
-//   match: {
-//     params: {
-//       playerID: string;
-//     };
-//   };
-// };
-
-// type PlayerHubState = {
-//   tournament: Tournament;
-//   playerList: Player[];
-//   pairings: MatchData[];
-//   matchData: MatchData;
-//   currPlayer: Player;
-//   loading: boolean;
-// };
+import TournamentLabel from "components/tournament/touramentLabel";
 
 interface PlayerHubRouterParams {
   playerID: string;
@@ -54,14 +37,6 @@ const PlayerHub: React.FunctionComponent<RootProps> = (props) => {
     new Player()
   );
   const [loading, setLoading]: [boolean, Function] = useState(false);
-
-  // constructor(props: PlayerHubProps) {
-  //   super(props);
-
-  //   this.buildStateFromPlayerHubDto = this.buildStateFromPlayerHubDto.bind(
-  //     this
-  //   );
-  // }
 
   const handleLeaveTmt = () => {
     fetch(`${props.serverAddress}/join`, {
@@ -156,6 +131,10 @@ const PlayerHub: React.FunctionComponent<RootProps> = (props) => {
   ) {
     return (
       <React.Fragment>
+        <TournamentLabel
+          serverAddress={props.serverAddress}
+          tournament={tournament}
+        />
         <PlayerMatch
           currPlayer={currPlayer}
           matchData={matchData}
@@ -179,19 +158,37 @@ const PlayerHub: React.FunctionComponent<RootProps> = (props) => {
       updatePlayerHub: buildStateFromPlayerHubDto,
       key: `round_${matchData.getMatch().getRoundNum()}`,
     };
-    return <Round {...roundProps} />;
+    return (
+      <React.Fragment>
+        <TournamentLabel
+          serverAddress={props.serverAddress}
+          tournament={tournament}
+        />
+        <Round {...roundProps} />
+      </React.Fragment>
+    );
   } else if (matchData.getMatch().getMatchStatus() === MatchStatus.Complete) {
     if (tournament.getTournamentStatus() === TournamentStatus.Complete) {
       return (
-        <FinalResults
-          tournament={tournament}
-          playerList={playerList}
-          serverAddress={props.serverAddress}
-        />
+        <React.Fragment>
+          <TournamentLabel
+            serverAddress={props.serverAddress}
+            tournament={tournament}
+          />
+          <FinalResults
+            tournament={tournament}
+            playerList={playerList}
+            serverAddress={props.serverAddress}
+          />
+        </React.Fragment>
       );
     } else {
       return (
         <React.Fragment>
+          <TournamentLabel
+            serverAddress={props.serverAddress}
+            tournament={tournament}
+          />
           <Pairings pairings={pairings} serverAddress={props.serverAddress} />
           <h4>Waiting for next round to start...</h4>
         </React.Fragment>
@@ -200,6 +197,10 @@ const PlayerHub: React.FunctionComponent<RootProps> = (props) => {
   } else if (currPlayer.getRoomCode() !== "") {
     return (
       <div className="m-2">
+        <TournamentLabel
+          serverAddress={props.serverAddress}
+          tournament={tournament}
+        />
         <PlayerList
           serverAddress={props.serverAddress}
           playerList={playerList}
